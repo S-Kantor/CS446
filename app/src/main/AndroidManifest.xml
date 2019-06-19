@@ -17,7 +17,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".BeatPad"
+            android:name=".NotePad"
             android:label="@string/title_activity_beat_pad"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>

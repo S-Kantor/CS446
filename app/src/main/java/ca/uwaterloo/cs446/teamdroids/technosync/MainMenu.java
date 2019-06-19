@@ -23,7 +23,7 @@ public class MainMenu extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //Open Drum Pad
-                Intent drumPadIntent = new Intent(getBaseContext(), BeatPad.class);
+                Intent drumPadIntent = new Intent(getBaseContext(), NotePad.class);
 
                 //Clear activity stack and start new activity
                 drumPadIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
