@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animation-list xmlns:android="http://schemas.android.com/apk/res/android"
+    android:oneshot="false">
+    <item android:drawable="@drawable/loop_button1" android:duration="50" />
+    <item android:drawable="@drawable/loop_button2" android:duration="50" />
+    <item android:drawable="@drawable/loop_button3" android:duration="50" />
+    <item android:drawable="@drawable/loop_button4" android:duration="50" />
+    <item android:drawable="@drawable/loop_button5" android:duration="50" />
+    <item android:drawable="@drawable/loop_button6" android:duration="50" />
+    <item android:drawable="@drawable/loop_button7" android:duration="50" />
+    <item android:drawable="@drawable/loop_button8" android:duration="50" />
+    <item android:drawable="@drawable/loop_button9" android:duration="50" />
+    <item android:drawable="@drawable/loop_button10" android:duration="50" />
+    <item android:drawable="@drawable/loop_button11" android:duration="50" />
+    <item android:drawable="@drawable/loop_button12" android:duration="50" />
+    <item android:drawable="@drawable/loop_button13" android:duration="50" />
+    <item android:drawable="@drawable/loop_button14" android:duration="50" />
+    <item android:drawable="@drawable/loop_button15" android:duration="50" />
+    <item android:drawable="@drawable/loop_button16" android:duration="50" />
+    <item android:drawable="@drawable/loop_button17" android:duration="50" />
+    <item android:drawable="@drawable/loop_button18" android:duration="50" />
+    <item android:drawable="@drawable/loop_button19" android:duration="50" />
+</animation-list>

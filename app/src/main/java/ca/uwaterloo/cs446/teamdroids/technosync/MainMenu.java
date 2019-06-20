@@ -18,12 +18,12 @@ public class MainMenu extends AppCompatActivity {
         //Get Buttons
         startButton = (Button) findViewById(R.id.startButton);
 
-        //Setup Drum Pad Link
+        //Setup Link to Create
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Open Drum Pad
-                Intent drumPadIntent = new Intent(getBaseContext(), NotePad.class);
+                //Open Music  Creation Window
+                Intent drumPadIntent = new Intent(getBaseContext(), CreationView.class);
 
                 //Clear activity stack and start new activity
                 drumPadIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

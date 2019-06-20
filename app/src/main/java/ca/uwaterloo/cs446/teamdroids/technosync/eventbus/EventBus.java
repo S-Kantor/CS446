@@ -1,5 +1,6 @@
 package ca.uwaterloo.cs446.teamdroids.technosync.eventbus;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class EventBus {
@@ -14,6 +15,10 @@ public class EventBus {
 
     public void register(Subscriber subscriber){
         subscribers.add(subscriber);
+    }
+
+    public EventBus (){
+        subscribers = new ArrayList<>();
     }
 
 }
