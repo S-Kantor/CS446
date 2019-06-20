@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import ca.uwaterloo.cs446.teamdroids.technosync.R;
 import ca.uwaterloo.cs446.teamdroids.technosync.common.StateArray;
 import ca.uwaterloo.cs446.teamdroids.technosync.common.Tile;
 import ca.uwaterloo.cs446.teamdroids.technosync.common.TileList;
@@ -28,14 +29,11 @@ public class AudioEngine extends Subscriber {
     private int currentLoopStates[] = new int[25];
     private Context applicationContext;
 
-
-    //Create structures to hold beat pad and player data\
-
     //Load in all loops for current loop pad
     private void loadLoops(List<Tile> tiles){
         //Clear all current streams
         loopSoundIds.clear();
-        soundPool.release();
+        // soundPool.release();
 
         //Read in all audio loops
         for(int i = 0; i < tiles.size(); i++){
