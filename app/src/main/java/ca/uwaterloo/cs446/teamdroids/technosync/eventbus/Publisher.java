@@ -6,6 +6,6 @@ public abstract class Publisher {
     public void setEventBus(EventBus eventBus) {
         this.eventBus = eventBus;
     }
+    public EventBus getEventBus() { return eventBus;}
 
-    public abstract void publish();
 }

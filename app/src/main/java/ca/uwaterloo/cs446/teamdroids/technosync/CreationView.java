@@ -6,10 +6,12 @@ import android.os.Bundle;
 import android.util.Base64;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.Field;
+import java.util.List;
 
 import ca.uwaterloo.cs446.teamdroids.technosync.audioengine.AudioEngine;
 import ca.uwaterloo.cs446.teamdroids.technosync.common.LoopPad;
@@ -26,8 +28,10 @@ public class CreationView extends AppCompatActivity {
     AudioEngine audioEngine;
     EventBus eventBus;
 
-    public static int getResId(String resName, Class<?> c) {
+    private static final String MISSING_MESSAGE = "Loop Pad Button Not Assigned! (PROTOTYPE ONLY)";
 
+    //Get the id of a resource by string
+    public static int getResId(String resName, Class<?> c) {
         try {
             Field idField = c.getDeclaredField(resName);
             return idField.getInt(idField);
@@ -37,45 +41,11 @@ public class CreationView extends AppCompatActivity {
         }
     }
 
+    //Get id string of a view
     public static String getId(View view) {
         if (view.getId() == View.NO_ID) return "no-id";
         else return view.getResources().getResourceName(view.getId());
     }
-
-    String tileListSerializer(){
-        try {
-            TileList tileList = new TileList();
-            tileList.setTiles(loopPad.tiles);
-            ByteArrayOutputStream bo = new ByteArrayOutputStream();
-            ObjectOutputStream so = new ObjectOutputStream(bo);
-            so.writeObject(tileList);
-            so.flush();
-            return new String(Base64.encode(bo.toByteArray(), 0));
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-
-        return "";
-    }
-
-    String stateArraySerializer(){
-        try {
-            StateArray stateArray = new StateArray();
-            stateArray.setStateArray(loopPad.stateArray);
-            ByteArrayOutputStream bo = new ByteArrayOutputStream();
-            ObjectOutputStream so = new ObjectOutputStream(bo);
-            so.writeObject(stateArray);
-            so.flush();
-
-            return new String(Base64.encode(bo.toByteArray(), 0));
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-
-        return "";
-    }
-
-
 
 
     //Define action for when loop button is clicked
@@ -83,22 +53,25 @@ public class CreationView extends AppCompatActivity {
         boolean clicked = false;
 
         public void onClick(View v) {
-            //Get image from loop button
-            ImageView loopButtonImage = (ImageView) v;
-            AnimationDrawable x = (AnimationDrawable) loopButtonImage.getBackground();
-
             //Determine Tile Id
             String id = getId(v);
             id = id.substring(48);
             int tileId = Integer.parseInt(id);
 
+            //Check for disabled state
+            if(loopPad.tiles.get(tileId-1).getDisabled()){
+                Toast.makeText(getApplicationContext(), MISSING_MESSAGE, Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            //Get image from loop button
+            ImageView loopButtonImage = (ImageView) v;
+            AnimationDrawable x = (AnimationDrawable) loopButtonImage.getBackground();
+
             //Update state array //Generalize later
             int newState = clicked ? 0 : 1;
             loopPad.stateArray[tileId - 1] = newState;
-            EventPackage newPackage = new EventPackage();
-            newPackage.setEventType(EventType.LOOPPAD_STATE_UPDATE);
-            newPackage.setSerializedData(stateArraySerializer());
-            eventBus.newEvent(newPackage);
+            loopPad.publishStateArray();
 
 
             //Start Stop Animation
@@ -113,6 +86,31 @@ public class CreationView extends AppCompatActivity {
         }
     };
 
+    //Switch view to loopPad
+    private void displayLoopPad(){
+        //Get tiles
+        List<Tile> tiles = loopPad.tiles;
+
+        for(int i = 1; i <=25; i++){
+            //Fetch imageview
+            String buttonId = "loop" + i;
+            int resId = getResources().getIdentifier(buttonId, "id", getPackageName());
+            ImageView loopButtonImage = (ImageView) findViewById(resId);
+
+
+            //Determine image
+            if(tiles.get(i-1).getDisabled()){
+                loopButtonImage.setBackgroundResource(R.drawable.missing_button);
+            }
+            else{
+                loopButtonImage.setBackgroundResource(R.drawable.loop_button);
+            }
+
+
+        }
+
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -123,13 +121,18 @@ public class CreationView extends AppCompatActivity {
             String buttonId = "loop" + i;
             int resId = getResources().getIdentifier(buttonId, "id", getPackageName());
             ImageView loopButtonImage = (ImageView) findViewById(resId);
-            loopButtonImage.setBackgroundResource(R.drawable.loop_button);
             loopButtonImage.setOnClickListener(loopButtonClick);
         }
 
+        //Setup eventbus
+        audioEngine = new AudioEngine();
+        loopPad = new LoopPad();
+        eventBus = new EventBus();
+        eventBus.register(audioEngine);
+        loopPad.setEventBus(eventBus);
+
         //Setup Loop pad with prototype loops
         //This needs to be generalized later
-        loopPad = new LoopPad();
         for(int i = 1; i <= 25; i ++){
             Tile current = new Tile();
             current.setTileId(i);
@@ -145,18 +148,15 @@ public class CreationView extends AppCompatActivity {
             loopPad.tiles.add(current);
         }
 
-        //Setup eventbus
-        audioEngine = new AudioEngine();
-        eventBus = new EventBus();
-        eventBus.register(audioEngine);
 
         //Setup audioengine
         audioEngine.setupAudioEngine(getApplicationContext());
+        loopPad.publishTileList();
 
-        EventPackage initialSetup = new EventPackage();
-        initialSetup.setEventType(EventType.LOOPPAD_MAPPING_UPDATE);
-        initialSetup.setSerializedData(tileListSerializer());
-        eventBus.newEvent(initialSetup);
+
+        //Display Loop View
+        displayLoopPad();
+
 
     }
 }
