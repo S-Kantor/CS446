@@ -28,7 +28,7 @@ public class LoopPad extends Publisher {
 
 
     //Convert tiles into a serialized string
-    private String serializeTileList(){
+    public String serializeTileList(){
         try {
             TileList tileList = new TileList();
             tileList.setTiles(tiles);

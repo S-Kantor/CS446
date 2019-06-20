@@ -14,6 +14,7 @@ import java.lang.reflect.Field;
 import java.util.List;
 
 import ca.uwaterloo.cs446.teamdroids.technosync.audioengine.AudioEngine;
+import ca.uwaterloo.cs446.teamdroids.technosync.common.InstrumentPad;
 import ca.uwaterloo.cs446.teamdroids.technosync.common.LoopPad;
 import ca.uwaterloo.cs446.teamdroids.technosync.common.StateArray;
 import ca.uwaterloo.cs446.teamdroids.technosync.common.Tile;
@@ -24,11 +25,16 @@ import ca.uwaterloo.cs446.teamdroids.technosync.eventbus.EventType;
 
 public class CreationView extends AppCompatActivity {
 
+    private static final String MISSING_MESSAGE = "Button Not Assigned! (PROTOTYPE ONLY)";
+
     LoopPad loopPad;
+    InstrumentPad instrumentPad;
     AudioEngine audioEngine;
     EventBus eventBus;
 
-    private static final String MISSING_MESSAGE = "Loop Pad Button Not Assigned! (PROTOTYPE ONLY)";
+    boolean onLoopPad = true;
+    boolean overridePublish = false;
+
 
     //Get the id of a resource by string
     public static int getResId(String resName, Class<?> c) {
@@ -48,11 +54,35 @@ public class CreationView extends AppCompatActivity {
     }
 
 
+    //Define action for when toggle switch is clicked
+    private View.OnClickListener toggleViewType = new View.OnClickListener() {
+
+        public void onClick(View v) {
+            //Get image from view
+            ImageView imageView = (ImageView) v;
+
+            //Toggle base image
+            if(onLoopPad){
+                onLoopPad = false;
+                imageView.setBackgroundResource(R.drawable.looppad_button);
+                displayInstrumentPad();
+            }
+            else{
+                onLoopPad = true;
+                imageView.setBackgroundResource(R.drawable.note_button);
+                displayLoopPad();
+            }
+        }
+    };
+
+
     //Define action for when loop button is clicked
     private View.OnClickListener loopButtonClick = new View.OnClickListener() {
         boolean clicked = false;
 
         public void onClick(View v) {
+
+
             //Determine Tile Id
             String id = getId(v);
             id = id.substring(48);
@@ -68,6 +98,14 @@ public class CreationView extends AppCompatActivity {
             ImageView loopButtonImage = (ImageView) v;
             AnimationDrawable x = (AnimationDrawable) loopButtonImage.getBackground();
 
+            //Play instrument hits, if on instrument pad
+            if(!onLoopPad){
+                instrumentPad.publishTileHit(tileId-1);
+                x.start();
+                return;
+            }
+
+
             //Update state array //Generalize later
             int newState = clicked ? 0 : 1;
             loopPad.stateArray[tileId - 1] = newState;
@@ -76,15 +114,38 @@ public class CreationView extends AppCompatActivity {
 
             //Start Stop Animation
             if(!clicked){
-                x.start();
                 clicked = true;
+                x.start();
             }
             else {
-                x.stop();
                 clicked = false;
+                x.stop();
             }
         }
     };
+
+    //Switch view to loopPad
+    private void displayInstrumentPad(){
+        //Get tiles
+        List<Tile> tiles = instrumentPad.tiles;
+
+        for(int i = 1; i <=25; i++){
+            //Fetch image view
+            String buttonId = "loop" + i;
+            int resId = getResources().getIdentifier(buttonId, "id", getPackageName());
+            ImageView loopButtonImage = (ImageView) findViewById(resId);
+
+
+            //Determine image
+            if(tiles.get(i-1).getDisabled()){
+                loopButtonImage.setBackgroundResource(R.drawable.missing_button);
+            }
+            else{
+                loopButtonImage.setBackgroundResource(R.drawable.instrument_button);
+            }
+        }
+
+    }
 
     //Switch view to loopPad
     private void displayLoopPad(){
@@ -107,9 +168,17 @@ public class CreationView extends AppCompatActivity {
             }
 
 
+            //Start/Stop Animation based on current state
+            if(loopPad.stateArray[i-1] == 1){
+                AnimationDrawable x = (AnimationDrawable) loopButtonImage.getBackground();
+                x.start();
+            }
+
         }
 
     }
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,17 +193,30 @@ public class CreationView extends AppCompatActivity {
             loopButtonImage.setOnClickListener(loopButtonClick);
         }
 
+        //Setup on click for toggle button
+        int resId = getResources().getIdentifier("togglePad", "id", getPackageName());
+        ImageView toggleButton = (ImageView) findViewById(resId);
+        toggleButton.setBackgroundResource(R.drawable.note_button);
+        toggleButton.setOnClickListener(toggleViewType);
+
         //Setup eventbus
         audioEngine = new AudioEngine();
+        instrumentPad = new InstrumentPad();
         loopPad = new LoopPad();
         eventBus = new EventBus();
+
+        //Register subscribers
         eventBus.register(audioEngine);
+
+        //Register publishers
         loopPad.setEventBus(eventBus);
+        instrumentPad.setEventBus(eventBus);
 
         //Setup Loop pad with prototype loops
         //This needs to be generalized later
         for(int i = 1; i <= 25; i ++){
             Tile current = new Tile();
+            Tile instrument = new Tile();
             current.setTileId(i);
 
             if(i > 16){
@@ -145,14 +227,18 @@ public class CreationView extends AppCompatActivity {
                 current.setFileId(getResId(fileName, R.raw.class));
             }
 
+            instrument.setFileId(getResId("prototype_instrument" +  i, R.raw.class));
+            //instrument.setDisabled(true);
+
             loopPad.tiles.add(current);
+            instrumentPad.tiles.add(instrument);
         }
 
 
         //Setup audioengine
         audioEngine.setupAudioEngine(getApplicationContext());
         loopPad.publishTileList();
-
+        instrumentPad.publishTileList();
 
         //Display Loop View
         displayLoopPad();

@@ -25,6 +25,7 @@ public class AudioEngine extends Subscriber {
 
     private  SoundPool soundPool;
     private List<Integer> loopSoundIds;
+    private List<Integer> instrumentSoundIds;
     private Map<Integer, Integer> soundToStream;
     private int currentLoopStates[] = new int[25];
     private Context applicationContext;
@@ -46,6 +47,27 @@ public class AudioEngine extends Subscriber {
             else{
                 //Add fake soundId
                 loopSoundIds.add(-1);
+            }
+        }
+    }
+
+    //Load in all instrument hits for current instrument pad
+    private void loadInstrumentHits(List<Tile> tiles){
+        //Clear all current streams
+        instrumentSoundIds.clear();
+        // soundPool.release();
+
+        //Read in all audio loops
+        for(int i = 0; i < tiles.size(); i++){
+            if(!tiles.get(i).getDisabled()) {
+                //Load file and get soundId
+                int fileId = tiles.get(i).getFileId();
+                int streamId = soundPool.load(applicationContext, fileId, 1);
+                instrumentSoundIds.add(streamId);
+            }
+            else{
+                //Add fake soundId
+                instrumentSoundIds.add(-1);
             }
         }
     }
@@ -91,6 +113,11 @@ public class AudioEngine extends Subscriber {
         }
     }
 
+    //Play instrument hit
+    private void instrumentHit(int tileId){
+        playAudio(instrumentSoundIds.get(tileId), 1, false);
+    }
+
 
     //Receive event from event bus
     public void notify(EventPackage eventPackage){
@@ -107,6 +134,16 @@ public class AudioEngine extends Subscriber {
             if (eventType == EventType.LOOPPAD_MAPPING_UPDATE) {
                 TileList tileList = (TileList) objectInputStream.readObject();
                 loadLoops(tileList.getTiles());
+            }
+            //Update collections of instruments
+            else if (eventType == EventType.INSTRUMENTPAD_MAPPING_UPDATE) {
+                TileList tileList = (TileList) objectInputStream.readObject();
+                loadInstrumentHits(tileList.getTiles());
+            }
+            //Update loop playback
+            else if (eventType == EventType.INSTRUMENTPAD_SOUND_HIT) {
+                Tile tile = (Tile) objectInputStream.readObject();
+                instrumentHit(tile.getTileId());
             }
             //Update loop playback
             else if (eventType == EventType.LOOPPAD_STATE_UPDATE) {
