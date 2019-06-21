@@ -89,7 +89,11 @@ public class CreationView extends AppCompatActivity {
             int tileId = Integer.parseInt(id);
 
             //Check for disabled state
-            if(loopPad.tiles.get(tileId-1).getDisabled()){
+            if(loopPad.tiles.get(tileId-1).getDisabled() && onLoopPad){
+                Toast.makeText(getApplicationContext(), MISSING_MESSAGE, Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if(instrumentPad.tiles.get(tileId-1).getDisabled() && !onLoopPad){
                 Toast.makeText(getApplicationContext(), MISSING_MESSAGE, Toast.LENGTH_SHORT).show();
                 return;
             }
