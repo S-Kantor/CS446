@@ -153,6 +153,7 @@ public class AudioEngine extends Subscriber {
         }
         catch(Exception e){
             //Error
+            // TODO needs logger.
         }
     }
 
@@ -160,6 +161,7 @@ public class AudioEngine extends Subscriber {
     public void setupAudioEngine(Context applicationContext){
         soundPool = new SoundPool(50, 3, 0);
         loopSoundIds = new ArrayList<>();
+        instrumentSoundIds = new ArrayList<>();
         soundToStream = new HashMap<>();
         this.applicationContext = applicationContext;
     }

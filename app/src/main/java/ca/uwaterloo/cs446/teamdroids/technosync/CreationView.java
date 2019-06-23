@@ -1,10 +1,12 @@
 package ca.uwaterloo.cs446.teamdroids.technosync;
 
+import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Base64;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -166,8 +168,7 @@ public class CreationView extends AppCompatActivity {
             //Determine image
             if(tiles.get(i-1).getDisabled()){
                 loopButtonImage.setBackgroundResource(R.drawable.missing_button);
-            }
-            else{
+            } else{
                 loopButtonImage.setBackgroundResource(R.drawable.loop_button);
             }
 
@@ -202,6 +203,15 @@ public class CreationView extends AppCompatActivity {
         ImageView toggleButton = (ImageView) findViewById(resId);
         toggleButton.setBackgroundResource(R.drawable.note_button);
         toggleButton.setOnClickListener(toggleViewType);
+
+        Button button = findViewById(R.id.notePadLauncher);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent myIntent = new Intent(CreationView.this, NotePad.class);
+                startActivity(myIntent);
+            }
+        });
 
         //Setup eventbus
         audioEngine = new AudioEngine();
