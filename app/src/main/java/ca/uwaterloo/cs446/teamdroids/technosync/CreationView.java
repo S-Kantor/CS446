@@ -4,7 +4,10 @@ import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Base64;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -13,6 +16,7 @@ import android.widget.Toast;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 
 import ca.uwaterloo.cs446.teamdroids.technosync.audioengine.AudioEngine;
@@ -28,6 +32,8 @@ import ca.uwaterloo.cs446.teamdroids.technosync.eventbus.EventType;
 public class CreationView extends AppCompatActivity {
 
     private static final String MISSING_MESSAGE = "Button Not Assigned! (PROTOTYPE ONLY)";
+
+    private Toolbar toolbar;
 
     LoopPad loopPad;
     InstrumentPad instrumentPad;
@@ -190,6 +196,10 @@ public class CreationView extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_creation_view);
 
+        // Set up the toolbar
+        toolbar = findViewById(R.id.tool_bar);
+        setSupportActionBar(toolbar);
+
         //Setup on click animations for all image views
         for(int i = 1; i <=25; i++){
             String buttonId = "loop" + i;
@@ -248,7 +258,6 @@ public class CreationView extends AppCompatActivity {
             instrumentPad.tiles.add(instrument);
         }
 
-
         //Setup audioengine
         audioEngine.setupAudioEngine(getApplicationContext());
         loopPad.publishTileList();
@@ -258,5 +267,27 @@ public class CreationView extends AppCompatActivity {
         displayLoopPad();
 
 
+    }
+
+    // Add menu items to the toolbar
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.layout.toolbar_menu, menu);
+        return true;
+    }
+
+    // Handle toolbar menu items interaction
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.change_presets) {
+
+        }
+        else if (id == R.id.end_session) {
+
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }
