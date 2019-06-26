@@ -27,6 +27,9 @@
     </LinearLayout>
 
     <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    <android.support.constraint.ConstraintLayout
         android:id="@+id/constraintLayout"
         android:layout_width="306dp"
         android:layout_height="305dp"
@@ -239,5 +242,7 @@
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/togglePad"
         app:layout_constraintEnd_toStartOf="@+id/togglePad" />
+
+    </android.support.constraint.ConstraintLayout>
 
 </android.support.constraint.ConstraintLayout>

@@ -66,12 +66,13 @@
         android:alpha="0.6"
         android:fadingEdge="horizontal|vertical"
         android:fadingEdgeLength="60dp"
+        android:scaleType="centerCrop"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/music_band_logo"
+        app:srcCompat="@drawable/abstractdiscolight"
         app:tintMode="src_over" />
 
 
