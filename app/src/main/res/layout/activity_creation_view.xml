@@ -10,14 +10,14 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/colorPrimary"
+        android:background="@android:color/background_dark"
         android:orientation="vertical">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/tool_bar"
             android:layout_width="match_parent"
             android:layout_height="46dp"
-            android:background="@android:color/holo_orange_light"
+            android:background="@android:color/white"
             android:elevation="4dp"
             android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
@@ -218,8 +218,8 @@
 
     <ImageView
         android:id="@+id/togglePad"
-        android:layout_width="140dp"
-        android:layout_height="55dp"
+        android:layout_width="110dp"
+        android:layout_height="45dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
