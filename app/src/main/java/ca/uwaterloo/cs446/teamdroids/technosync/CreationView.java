@@ -145,9 +145,7 @@ public class CreationView extends AppCompatActivity {
     private void flipTile(final ImageView imageView, final int backImage, final int tileId, final  boolean loopabale){
         imageView.animate().rotationY(90f).setListener(new Animator.AnimatorListener() {
             @Override
-            public void onAnimationStart(Animator animation) {
-
-            }
+            public void onAnimationStart(Animator animation) { }
 
             @Override
             public void onAnimationEnd(Animator animation) {
@@ -171,14 +169,10 @@ public class CreationView extends AppCompatActivity {
             }
 
             @Override
-            public void onAnimationCancel(Animator animation) {
-
-            }
+            public void onAnimationCancel(Animator animation) { }
 
             @Override
-            public void onAnimationRepeat(Animator animation) {
-
-            }
+            public void onAnimationRepeat(Animator animation) { }
         });
     }
 
@@ -222,6 +216,14 @@ public class CreationView extends AppCompatActivity {
             }
         }
 
+    }
+
+    //Animate background
+    private void animateBackground(){
+        AnimationDrawable animationDrawable = (AnimationDrawable) findViewById(R.id.beat_pad_layout).getBackground();
+        animationDrawable.setEnterFadeDuration(10);
+        animationDrawable.setExitFadeDuration(5000);
+        animationDrawable.start();
     }
 
 
@@ -303,6 +305,7 @@ public class CreationView extends AppCompatActivity {
 
         //Display Loop View
         displayLoopPad();
+        animateBackground();
 
         firstLoad = false;
 

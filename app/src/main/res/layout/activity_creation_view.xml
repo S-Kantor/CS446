@@ -2,15 +2,17 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/beat-pad-layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/gradient_animation"
     android:theme="@style/Theme.AppCompat.DayNight.DarkActionBar"
     tools:context="ca.uwaterloo.cs446.teamdroids.technosync.CreationView">
 
     <LinearLayout
+        android:id="@+id/beatpad-layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@android:color/background_dark"
         android:orientation="vertical">
 
         <android.support.v7.widget.Toolbar
@@ -29,195 +31,196 @@
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-    <android.support.constraint.ConstraintLayout
-        android:id="@+id/constraintLayout"
-        android:layout_width="306dp"
-        android:layout_height="305dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
 
-        <ImageView
-            android:id="@+id/loop16"
-            android:layout_width="61dp"
-            android:layout_height="60dp"
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/constraintLayout"
+            android:layout_width="306dp"
+            android:layout_height="305dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/loop11" />
+            app:layout_constraintTop_toTopOf="parent">
 
-        <ImageView
-            android:id="@+id/loop17"
-            android:layout_width="61dp"
-            android:layout_height="60dp"
-            app:layout_constraintStart_toEndOf="@+id/loop16"
-            app:layout_constraintTop_toBottomOf="@+id/loop12" />
+            <ImageView
+                android:id="@+id/loop16"
+                android:layout_width="61dp"
+                android:layout_height="60dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/loop11" />
 
-        <ImageView
-            android:id="@+id/loop12"
-            android:layout_width="61dp"
-            android:layout_height="60dp"
-            app:layout_constraintStart_toEndOf="@+id/loop11"
-            app:layout_constraintTop_toBottomOf="@+id/loop7" />
+            <ImageView
+                android:id="@+id/loop17"
+                android:layout_width="61dp"
+                android:layout_height="60dp"
+                app:layout_constraintStart_toEndOf="@+id/loop16"
+                app:layout_constraintTop_toBottomOf="@+id/loop12" />
 
-        <ImageView
-            android:id="@+id/loop14"
-            android:layout_width="61dp"
-            android:layout_height="60dp"
-            app:layout_constraintStart_toEndOf="@+id/loop13"
-            app:layout_constraintTop_toBottomOf="@+id/loop9" />
+            <ImageView
+                android:id="@+id/loop12"
+                android:layout_width="61dp"
+                android:layout_height="60dp"
+                app:layout_constraintStart_toEndOf="@+id/loop11"
+                app:layout_constraintTop_toBottomOf="@+id/loop7" />
 
-        <ImageView
-            android:id="@+id/loop11"
-            android:layout_width="61dp"
-            android:layout_height="60dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/loop6" />
+            <ImageView
+                android:id="@+id/loop14"
+                android:layout_width="61dp"
+                android:layout_height="60dp"
+                app:layout_constraintStart_toEndOf="@+id/loop13"
+                app:layout_constraintTop_toBottomOf="@+id/loop9" />
 
-        <ImageView
-            android:id="@+id/loop15"
-            android:layout_width="61dp"
-            android:layout_height="60dp"
-            app:layout_constraintStart_toEndOf="@+id/loop14"
-            app:layout_constraintTop_toBottomOf="@+id/loop10" />
+            <ImageView
+                android:id="@+id/loop11"
+                android:layout_width="61dp"
+                android:layout_height="60dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/loop6" />
 
-        <ImageView
-            android:id="@+id/loop20"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            app:layout_constraintStart_toEndOf="@+id/loop19"
-            app:layout_constraintTop_toBottomOf="@+id/loop15" />
+            <ImageView
+                android:id="@+id/loop15"
+                android:layout_width="61dp"
+                android:layout_height="60dp"
+                app:layout_constraintStart_toEndOf="@+id/loop14"
+                app:layout_constraintTop_toBottomOf="@+id/loop10" />
 
-        <ImageView
-            android:id="@+id/loop21"
-            android:layout_width="61dp"
-            android:layout_height="60dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/loop16" />
+            <ImageView
+                android:id="@+id/loop20"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                app:layout_constraintStart_toEndOf="@+id/loop19"
+                app:layout_constraintTop_toBottomOf="@+id/loop15" />
 
-        <ImageView
-            android:id="@+id/loop25"
-            android:layout_width="61dp"
-            android:layout_height="60dp"
-            app:layout_constraintStart_toEndOf="@+id/loop24"
-            app:layout_constraintTop_toBottomOf="@+id/loop20" />
+            <ImageView
+                android:id="@+id/loop21"
+                android:layout_width="61dp"
+                android:layout_height="60dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/loop16" />
 
-        <ImageView
-            android:id="@+id/loop24"
-            android:layout_width="61dp"
-            android:layout_height="60dp"
-            app:layout_constraintStart_toEndOf="@+id/loop23"
-            app:layout_constraintTop_toBottomOf="@+id/loop19" />
+            <ImageView
+                android:id="@+id/loop25"
+                android:layout_width="61dp"
+                android:layout_height="60dp"
+                app:layout_constraintStart_toEndOf="@+id/loop24"
+                app:layout_constraintTop_toBottomOf="@+id/loop20" />
 
-        <ImageView
-            android:id="@+id/loop23"
-            android:layout_width="61dp"
-            android:layout_height="60dp"
-            app:layout_constraintStart_toEndOf="@+id/loop22"
-            app:layout_constraintTop_toBottomOf="@+id/loop18" />
+            <ImageView
+                android:id="@+id/loop24"
+                android:layout_width="61dp"
+                android:layout_height="60dp"
+                app:layout_constraintStart_toEndOf="@+id/loop23"
+                app:layout_constraintTop_toBottomOf="@+id/loop19" />
 
-        <ImageView
-            android:id="@+id/loop22"
-            android:layout_width="61dp"
-            android:layout_height="60dp"
-            app:layout_constraintStart_toEndOf="@+id/loop21"
-            app:layout_constraintTop_toBottomOf="@+id/loop17" />
+            <ImageView
+                android:id="@+id/loop23"
+                android:layout_width="61dp"
+                android:layout_height="60dp"
+                app:layout_constraintStart_toEndOf="@+id/loop22"
+                app:layout_constraintTop_toBottomOf="@+id/loop18" />
 
-        <ImageView
-            android:id="@+id/loop19"
-            android:layout_width="61dp"
-            android:layout_height="60dp"
-            app:layout_constraintStart_toEndOf="@+id/loop18"
-            app:layout_constraintTop_toBottomOf="@+id/loop14" />
+            <ImageView
+                android:id="@+id/loop22"
+                android:layout_width="61dp"
+                android:layout_height="60dp"
+                app:layout_constraintStart_toEndOf="@+id/loop21"
+                app:layout_constraintTop_toBottomOf="@+id/loop17" />
 
-        <ImageView
-            android:id="@+id/loop18"
-            android:layout_width="61dp"
-            android:layout_height="60dp"
-            app:layout_constraintStart_toEndOf="@+id/loop17"
-            app:layout_constraintTop_toBottomOf="@+id/loop13" />
+            <ImageView
+                android:id="@+id/loop19"
+                android:layout_width="61dp"
+                android:layout_height="60dp"
+                app:layout_constraintStart_toEndOf="@+id/loop18"
+                app:layout_constraintTop_toBottomOf="@+id/loop14" />
 
-        <ImageView
-            android:id="@+id/loop13"
-            android:layout_width="61dp"
-            android:layout_height="60dp"
-            app:layout_constraintStart_toEndOf="@+id/loop12"
-            app:layout_constraintTop_toBottomOf="@+id/loop8" />
+            <ImageView
+                android:id="@+id/loop18"
+                android:layout_width="61dp"
+                android:layout_height="60dp"
+                app:layout_constraintStart_toEndOf="@+id/loop17"
+                app:layout_constraintTop_toBottomOf="@+id/loop13" />
 
-        <ImageView
-            android:id="@+id/loop1"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:layout_editor_absoluteX="0dp" />
+            <ImageView
+                android:id="@+id/loop13"
+                android:layout_width="61dp"
+                android:layout_height="60dp"
+                app:layout_constraintStart_toEndOf="@+id/loop12"
+                app:layout_constraintTop_toBottomOf="@+id/loop8" />
 
-        <ImageView
-            android:id="@+id/loop2"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            app:layout_constraintStart_toEndOf="@+id/loop1"
-            app:layout_constraintTop_toTopOf="parent" />
+            <ImageView
+                android:id="@+id/loop1"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:layout_editor_absoluteX="0dp" />
 
-        <ImageView
-            android:id="@+id/loop3"
-            android:layout_width="61dp"
-            android:layout_height="60dp"
-            app:layout_constraintStart_toEndOf="@+id/loop2"
-            app:layout_constraintTop_toTopOf="parent" />
+            <ImageView
+                android:id="@+id/loop2"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                app:layout_constraintStart_toEndOf="@+id/loop1"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/loop4"
-            android:layout_width="61dp"
-            android:layout_height="60dp"
-            app:layout_constraintStart_toEndOf="@+id/loop3"
-            app:layout_constraintTop_toTopOf="parent" />
+            <ImageView
+                android:id="@+id/loop3"
+                android:layout_width="61dp"
+                android:layout_height="60dp"
+                app:layout_constraintStart_toEndOf="@+id/loop2"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/loop5"
-            android:layout_width="61dp"
-            android:layout_height="60dp"
-            app:layout_constraintStart_toEndOf="@+id/loop4"
-            app:layout_constraintTop_toTopOf="parent" />
+            <ImageView
+                android:id="@+id/loop4"
+                android:layout_width="61dp"
+                android:layout_height="60dp"
+                app:layout_constraintStart_toEndOf="@+id/loop3"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/loop10"
-            android:layout_width="61dp"
-            android:layout_height="60dp"
-            app:layout_constraintStart_toEndOf="@+id/loop9"
-            app:layout_constraintTop_toBottomOf="@+id/loop5" />
+            <ImageView
+                android:id="@+id/loop5"
+                android:layout_width="61dp"
+                android:layout_height="60dp"
+                app:layout_constraintStart_toEndOf="@+id/loop4"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/loop9"
-            android:layout_width="61dp"
-            android:layout_height="60dp"
-            app:layout_constraintStart_toEndOf="@+id/loop8"
-            app:layout_constraintTop_toBottomOf="@+id/loop4" />
+            <ImageView
+                android:id="@+id/loop10"
+                android:layout_width="61dp"
+                android:layout_height="60dp"
+                app:layout_constraintStart_toEndOf="@+id/loop9"
+                app:layout_constraintTop_toBottomOf="@+id/loop5" />
 
-        <ImageView
-            android:id="@+id/loop7"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            app:layout_constraintStart_toEndOf="@+id/loop6"
-            app:layout_constraintTop_toBottomOf="@+id/loop2" />
+            <ImageView
+                android:id="@+id/loop9"
+                android:layout_width="61dp"
+                android:layout_height="60dp"
+                app:layout_constraintStart_toEndOf="@+id/loop8"
+                app:layout_constraintTop_toBottomOf="@+id/loop4" />
 
-        <ImageView
-            android:id="@+id/loop6"
-            android:layout_width="61dp"
-            android:layout_height="60dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/loop1" />
+            <ImageView
+                android:id="@+id/loop7"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                app:layout_constraintStart_toEndOf="@+id/loop6"
+                app:layout_constraintTop_toBottomOf="@+id/loop2" />
 
-        <ImageView
-            android:id="@+id/loop8"
-            android:layout_width="61dp"
-            android:layout_height="60dp"
-            app:layout_constraintStart_toEndOf="@+id/loop7"
-            app:layout_constraintTop_toBottomOf="@+id/loop3" />
+            <ImageView
+                android:id="@+id/loop6"
+                android:layout_width="61dp"
+                android:layout_height="60dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/loop1" />
 
-    </android.support.constraint.ConstraintLayout>
+            <ImageView
+                android:id="@+id/loop8"
+                android:layout_width="61dp"
+                android:layout_height="60dp"
+                app:layout_constraintStart_toEndOf="@+id/loop7"
+                app:layout_constraintTop_toBottomOf="@+id/loop3" />
+
+        </android.support.constraint.ConstraintLayout>
 
         <ImageView
             android:id="@+id/togglePad"
@@ -232,16 +235,16 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
 
-    <Button
-        android:id="@+id/notePadLauncher"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="12dp"
-        android:layout_marginRight="12dp"
-        android:text="Go To NotePad"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/togglePad"
-        app:layout_constraintEnd_toStartOf="@+id/togglePad" />
+        <Button
+            android:id="@+id/notePadLauncher"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="12dp"
+            android:layout_marginRight="12dp"
+            android:text="Go To NotePad"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/togglePad"
+            app:layout_constraintEnd_toStartOf="@+id/togglePad" />
 
     </android.support.constraint.ConstraintLayout>
 
