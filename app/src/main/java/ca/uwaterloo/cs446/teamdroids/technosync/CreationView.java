@@ -1,5 +1,8 @@
 package ca.uwaterloo.cs446.teamdroids.technosync;
 
+import android.animation.Animator;
+import android.animation.AnimatorInflater;
+import android.animation.AnimatorSet;
 import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;
 import android.support.v7.app.AppCompatActivity;
@@ -40,8 +43,10 @@ public class CreationView extends AppCompatActivity {
     AudioEngine audioEngine;
     EventBus eventBus;
 
+
     boolean onLoopPad = true;
     boolean overridePublish = false;
+    boolean firstLoad = true;
 
 
     //Get the id of a resource by string
@@ -113,6 +118,7 @@ public class CreationView extends AppCompatActivity {
             //Play instrument hits, if on instrument pad
             if(!onLoopPad){
                 instrumentPad.publishTileHit(tileId-1);
+                x.stop();
                 x.start();
                 return;
             }
@@ -136,55 +142,84 @@ public class CreationView extends AppCompatActivity {
         }
     };
 
+    private void flipTile(final ImageView imageView, final int backImage, final int tileId, final  boolean loopabale){
+        imageView.animate().rotationY(90f).setListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                //Determine image
+                if(instrumentPad.tiles.get(tileId).getDisabled()){
+                    imageView.setBackgroundResource(R.drawable.missing_button);
+                }
+                else{
+                    imageView.setBackgroundResource(backImage);
+                }
+
+                imageView.setRotationY(270f);
+                imageView.animate().rotationY(360f).setListener(null);
+
+                //Start/Stop Animation based on current state
+                if(loopPad.stateArray[tileId] == 1 && loopabale){
+                    AnimationDrawable x = (AnimationDrawable) imageView.getBackground();
+                    x.start();
+                }
+
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        });
+    }
+
+
     //Switch view to loopPad
     private void displayInstrumentPad(){
-        //Get tiles
-        List<Tile> tiles = instrumentPad.tiles;
 
         for(int i = 1; i <=25; i++){
             //Fetch image view
             String buttonId = "loop" + i;
             int resId = getResources().getIdentifier(buttonId, "id", getPackageName());
-            ImageView loopButtonImage = (ImageView) findViewById(resId);
+            final ImageView loopButtonImage = (ImageView) findViewById(resId);
+            final int tileId = i -1;
 
-
-            //Determine image
-            if(tiles.get(i-1).getDisabled()){
-                loopButtonImage.setBackgroundResource(R.drawable.missing_button);
-            }
-            else{
-                loopButtonImage.setBackgroundResource(R.drawable.instrument_button);
-            }
+            //Flip image to instrument pad
+            flipTile(loopButtonImage, R.drawable.instrument_button, tileId, false);
         }
 
     }
 
     //Switch view to loopPad
     private void displayLoopPad(){
-        //Get tiles
-        List<Tile> tiles = loopPad.tiles;
-
         for(int i = 1; i <=25; i++){
             //Fetch imageview
             String buttonId = "loop" + i;
             int resId = getResources().getIdentifier(buttonId, "id", getPackageName());
-            ImageView loopButtonImage = (ImageView) findViewById(resId);
+            final int tileId = i -1;
+            final ImageView loopButtonImage = (ImageView) findViewById(resId);
 
 
-            //Determine image
-            if(tiles.get(i-1).getDisabled()){
-                loopButtonImage.setBackgroundResource(R.drawable.missing_button);
-            } else{
-                loopButtonImage.setBackgroundResource(R.drawable.loop_button);
+            if(!firstLoad){
+               flipTile(loopButtonImage, R.drawable.loop_button, tileId, true);
             }
-
-
-            //Start/Stop Animation based on current state
-            if(loopPad.stateArray[i-1] == 1){
-                AnimationDrawable x = (AnimationDrawable) loopButtonImage.getBackground();
-                x.start();
+            else {
+                //Determine image
+                if(instrumentPad.tiles.get(tileId).getDisabled()){
+                    loopButtonImage.setBackgroundResource(R.drawable.missing_button);
+                } else{
+                    loopButtonImage.setBackgroundResource(R.drawable.loop_button);
+                }
             }
-
         }
 
     }
@@ -242,6 +277,7 @@ public class CreationView extends AppCompatActivity {
             Tile current = new Tile();
             Tile instrument = new Tile();
             current.setTileId(i);
+            instrument.setTileId(i);
 
             if(i > 16){
                 current.setDisabled(true);
@@ -252,6 +288,8 @@ public class CreationView extends AppCompatActivity {
             }
 
             instrument.setFileId(getResId("prototype_instrument" +  i, R.raw.class));
+            instrument.setLoopable(false);
+            current.setLoopable(true);
             //instrument.setDisabled(true);
 
             loopPad.tiles.add(current);
@@ -266,6 +304,7 @@ public class CreationView extends AppCompatActivity {
         //Display Loop View
         displayLoopPad();
 
+        firstLoad = false;
 
     }
 

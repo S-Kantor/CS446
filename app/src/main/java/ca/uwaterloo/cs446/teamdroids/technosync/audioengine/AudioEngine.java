@@ -24,98 +24,27 @@ import ca.uwaterloo.cs446.teamdroids.technosync.eventbus.Subscriber;
 public class AudioEngine extends Subscriber {
 
     private  SoundPool soundPool;
-    private List<Integer> loopSoundIds;
-    private List<Integer> instrumentSoundIds;
-    private Map<Integer, Integer> soundToStream;
-    private int currentLoopStates[] = new int[25];
     private Context applicationContext;
-
-    //Load in all loops for current loop pad
-    private void loadLoops(List<Tile> tiles){
-        //Clear all current streams
-        loopSoundIds.clear();
-        // soundPool.release();
-
-        //Read in all audio loops
-        for(int i = 0; i < tiles.size(); i++){
-            if(!tiles.get(i).getDisabled()) {
-                //Load file and get soundId
-                int fileId = tiles.get(i).getFileId();
-                int streamId = soundPool.load(applicationContext, fileId, 1);
-                loopSoundIds.add(streamId);
-            }
-            else{
-                //Add fake soundId
-                loopSoundIds.add(-1);
-            }
-        }
-    }
-
-    //Load in all instrument hits for current instrument pad
-    private void loadInstrumentHits(List<Tile> tiles){
-        //Clear all current streams
-        instrumentSoundIds.clear();
-        // soundPool.release();
-
-        //Read in all audio loops
-        for(int i = 0; i < tiles.size(); i++){
-            if(!tiles.get(i).getDisabled()) {
-                //Load file and get soundId
-                int fileId = tiles.get(i).getFileId();
-                int streamId = soundPool.load(applicationContext, fileId, 1);
-                instrumentSoundIds.add(streamId);
-            }
-            else{
-                //Add fake soundId
-                instrumentSoundIds.add(-1);
-            }
-        }
-    }
-
-    //Play/Stop Audio
-    private void playAudio(int soundId, int state, boolean loop){
-        //Get stream
-        Integer streamId = soundToStream.get(soundId);
-        int loopStatus = loop ? -1 : 0;
-
-        //Stop
-        if(state == 0){
-            if(streamId != null){
-                soundPool.stop(streamId);
-                soundToStream.remove(soundId);
-            }
-        }
-        //Play
-        else {
-            //Create new stream
-            if(streamId == null){
-                streamId = soundPool.play(soundId, 1, 1, 0, loopStatus, 1);
-                soundToStream.put(soundId, streamId);
-            }
-            //Use existing stream
-            else{
-                soundPool.setLoop(streamId, loopStatus);
-                soundPool.resume(streamId);
-            }
-        }
-    }
+    private FileManager fileManager;
+    private PlaybackManager playbackManager;
 
     //Update playback of loops
     //States length should always be 25
     private void loopStateUpdate(int states[]){
-        //Compare against current state
         for(int i = 0; i < 25; i++){
-            //State change
-            if(currentLoopStates[i] != states[i]){
-                currentLoopStates[i] = states[i];
-                playAudio(loopSoundIds.get(i), currentLoopStates[i], true);
+            Integer tileId = i + 1;
+            if(states[i] == 0){
+                playbackManager.stopStream(tileId, soundPool);
+            }
+            else {
+                playbackManager.playFile(tileId, true, fileManager, soundPool);
             }
         }
     }
 
     //Play instrument hit
     private void instrumentHit(int tileId){
-        playAudio(instrumentSoundIds.get(tileId), 1, false);
+        playbackManager.playFile(tileId, false, fileManager, soundPool);
     }
 
 
@@ -133,12 +62,12 @@ public class AudioEngine extends Subscriber {
             //Update collections of loops
             if (eventType == EventType.LOOPPAD_MAPPING_UPDATE) {
                 TileList tileList = (TileList) objectInputStream.readObject();
-                loadLoops(tileList.getTiles());
+                fileManager.loadFilesFromTiles(tileList.getTiles(), soundPool, applicationContext);
             }
             //Update collections of instruments
             else if (eventType == EventType.INSTRUMENTPAD_MAPPING_UPDATE) {
                 TileList tileList = (TileList) objectInputStream.readObject();
-                loadInstrumentHits(tileList.getTiles());
+                fileManager.loadFilesFromTiles(tileList.getTiles(), soundPool, applicationContext);
             }
             //Update loop playback
             else if (eventType == EventType.INSTRUMENTPAD_SOUND_HIT) {
@@ -160,9 +89,8 @@ public class AudioEngine extends Subscriber {
     //Initialize SoundPool
     public void setupAudioEngine(Context applicationContext){
         soundPool = new SoundPool(50, 3, 0);
-        loopSoundIds = new ArrayList<>();
-        instrumentSoundIds = new ArrayList<>();
-        soundToStream = new HashMap<>();
+        fileManager = new FileManager();
+        playbackManager = new PlaybackManager();
         this.applicationContext = applicationContext;
     }
 }
