@@ -8,18 +8,24 @@ import android.widget.Button;
 
 public class MainMenu extends AppCompatActivity {
 
-    public Button startButton;
+    public Button practiceButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        try {
+            this.getSupportActionBar().hide();
+        } catch (NullPointerException e) {
+        }
+
         setContentView(R.layout.activity_main_menu);
 
         //Get Buttons
-        startButton = (Button) findViewById(R.id.startButton);
+        practiceButton = (Button) findViewById(R.id.practiceButton);
 
         //Setup Link to Create
-        startButton.setOnClickListener(new View.OnClickListener() {
+        practiceButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //Open Music  Creation Window

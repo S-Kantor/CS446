@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".CreationView"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent">
+
+    <item
+        android:id="@+id/change_presets"
+        android:title="CHANGE PRESETS"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/end_session"
+        android:title="END SESSION"
+        app:showAsAction="always" />
+
+</menu>
