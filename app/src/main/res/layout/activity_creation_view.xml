@@ -9,11 +9,28 @@
     android:theme="@style/Theme.AppCompat.DayNight.DarkActionBar"
     tools:context="ca.uwaterloo.cs446.teamdroids.technosync.CreationView">
 
+    <ImageView
+        android:id="@+id/togglePad"
+        android:layout_width="167dp"
+        android:layout_height="35dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/beatpad-layout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout2" />
+
     <LinearLayout
         android:id="@+id/beatpad-layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="0dp">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/tool_bar"
@@ -29,14 +46,26 @@
     </LinearLayout>
 
     <android.support.constraint.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:id="@+id/constraintLayout2"
+        android:layout_width="354dp"
+        android:layout_height="365dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/beatpad_background"
+        app:layout_constraintBottom_toBottomOf="@+id/beatpad-layout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.408"
+        app:layout_constraintStart_toStartOf="@+id/beatpad-layout"
+        app:layout_constraintTop_toTopOf="@+id/beatpad-layout"
+        app:layout_constraintVertical_bias="0.44">
 
         <android.support.constraint.ConstraintLayout
             android:id="@+id/constraintLayout"
-            android:layout_width="306dp"
-            android:layout_height="305dp"
+            android:layout_width="304dp"
+            android:layout_height="304dp"
             android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
@@ -222,19 +251,6 @@
 
         </android.support.constraint.ConstraintLayout>
 
-        <ImageView
-            android:id="@+id/togglePad"
-            android:layout_width="167dp"
-            android:layout_height="35dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="57dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
-
         <Button
             android:id="@+id/notePadLauncher"
             android:layout_width="wrap_content"
@@ -247,5 +263,15 @@
             app:layout_constraintEnd_toStartOf="@+id/togglePad" />
 
     </android.support.constraint.ConstraintLayout>
+
+    <ca.uwaterloo.cs446.teamdroids.technosync.visualization.AudioBar
+        android:id="@+id/barVisualizer"
+        android:layout_width="412dp"
+        android:layout_height="197dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/beatpad-layout"
+        app:layout_constraintTop_toTopOf="@+id/beatpad-layout"
+        app:layout_constraintVertical_bias="1.0"
+        tools:layout_editor_absoluteX="0dp" />
 
 </android.support.constraint.ConstraintLayout>

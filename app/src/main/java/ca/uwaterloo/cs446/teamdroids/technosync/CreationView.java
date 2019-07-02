@@ -31,6 +31,7 @@ import ca.uwaterloo.cs446.teamdroids.technosync.common.TileList;
 import ca.uwaterloo.cs446.teamdroids.technosync.eventbus.EventBus;
 import ca.uwaterloo.cs446.teamdroids.technosync.eventbus.EventPackage;
 import ca.uwaterloo.cs446.teamdroids.technosync.eventbus.EventType;
+import ca.uwaterloo.cs446.teamdroids.technosync.visualization.AudioBar;
 
 public class CreationView extends AppCompatActivity {
 
@@ -259,6 +260,11 @@ public class CreationView extends AppCompatActivity {
                 startActivity(myIntent);
             }
         });
+
+
+        //
+        AudioBar audioBar = (AudioBar) findViewById(R.id.barVisualizer);
+        audioBar.setPlayer(0);
 
         //Setup eventbus
         audioEngine = new AudioEngine();
