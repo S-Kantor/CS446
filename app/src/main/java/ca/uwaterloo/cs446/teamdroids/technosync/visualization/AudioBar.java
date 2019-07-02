@@ -18,6 +18,8 @@ import java.util.Random;
 
 public class AudioBar extends View {
 
+    private static final int NUMBER_OF_BARS = 32;
+    private static final int BAR_COLOUR = 0x80100c05;
 
     private Visualizer visualizer;
     private byte[] audioBytes;
@@ -38,10 +40,12 @@ public class AudioBar extends View {
     }
     protected void init() {
         paint = new Paint();
-        paint.setColor(Color.BLACK);
+        paint.setColor(BAR_COLOUR);
     }
 
     //Link view with visualization data
+    //Set player functionality modelled after MIT Licensed Visualiztion Framework
+    //https://github.com/gauravk95/audio-visualizer-android/blob/master/audiovisualizer/src/main/java/com/gauravk/audiovisualizer/visualizer/BarVisualizer.java
     public void setPlayer(int audioSessionId) {
         visualizer = new Visualizer(audioSessionId);
         visualizer.setCaptureSize(Visualizer.getCaptureSizeRange()[1]);
@@ -63,46 +67,41 @@ public class AudioBar extends View {
         visualizer.setEnabled(true);
     }
 
+    //On Draw just draws a simplified waveform
     @Override
     protected void onDraw(Canvas canvas) {
 
-        paint.setColor(Color.BLACK);
-        paint.setStyle(Paint.Style.FILL);
-
-        canvas.drawRect((float) 0.0 , (float) 0.0, (float)canvas.getWidth(), (float)canvas.getHeight(), paint);
-
-
-        paint.setColor(Color.RED);
+        //Normalize waveform
+        float[] normalizedWaveForm = new float[audioBytes.length];
+        for(int i = 0; i < audioBytes.length; i++){
+            normalizedWaveForm[i] = ((float) audioBytes[i] + 128) / 256;
+        }
 
 
-        for(int i = 0; i < audioBytes.length; i++) {
+        //Draw bars
+        for(int i = 0; i < NUMBER_OF_BARS; i++) {
 
-            float x = audioBytes[i];
-            float value = (float) audioBytes[i] / 128;
-            float width = (float) canvas.getWidth() / audioBytes.length;
-            float height =  (float) (canvas.getHeight() / 2) * value;
+            //Get value based on current sample point
+            int barWidthtoWaveForm = normalizedWaveForm.length / NUMBER_OF_BARS;
+            int samplingIndex = (i * barWidthtoWaveForm) / 2;
+            float value = normalizedWaveForm[samplingIndex];
 
+            //Calculate bar width and height in relation to on-screen view
+            float width = (float) canvas.getWidth() / NUMBER_OF_BARS;
+            float height =  (float) canvas.getHeight() * value;
+
+            //Calculate bar coordinates
             float lx = i * width;
-            float ly = (float) canvas.getHeight() / 2;
+            float ly = (float) canvas.getHeight() - height;
             float rx = (i + 1) * width;
-            float ry = ((float)canvas.getHeight() / 2) + height;
+            float ry = ((float)canvas.getHeight());
 
+
+            //Draw rectangle
             RectF rectF = new RectF();
-            if(ry < ly){
-                rectF.set(lx, ry, rx, ly);
-            }
-            else{
-                rectF.set(lx, ly, rx, ry);
-            }
-
-
-
-            paint.setColor(Color.RED);
+            rectF.set(lx, ly, rx, ry);
+            paint.setStyle(Paint.Style.FILL);
             canvas.drawRect(rectF, paint);
-
-
-            paint.setColor(Color.WHITE);
-            canvas.drawText(String.valueOf(audioBytes[i]), 0, 0, paint);
         }
 
 

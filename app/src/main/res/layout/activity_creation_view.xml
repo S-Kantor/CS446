@@ -19,20 +19,11 @@
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toBottomOf="@+id/beatpad-layout"
+        app:layout_constraintBottom_toBottomOf="@+id/barVisualizer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout2" />
-
-    <ca.uwaterloo.cs446.teamdroids.technosync.visualization.AudioBar
-        android:id="@+id/barVisualizer"
-        android:layout_width="412dp"
-        android:layout_height="197dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toBottomOf="@+id/beatpad-layout"
-        app:layout_constraintTop_toTopOf="@+id/beatpad-layout"
-        app:layout_constraintVertical_bias="0.13999999"
-        tools:layout_editor_absoluteX="-1dp" />
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout2"
+        app:layout_constraintVertical_bias="0.06999999" />
 
     <LinearLayout
         android:id="@+id/beatpad-layout"
@@ -40,7 +31,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="0dp">
+        tools:layout_editor_absoluteY="-59dp">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/tool_bar"
@@ -61,6 +52,8 @@
         android:layout_height="365dp"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
         android:layout_marginBottom="8dp"
         android:background="@drawable/beatpad_background"
         app:layout_constraintBottom_toBottomOf="@+id/beatpad-layout"
@@ -273,5 +266,12 @@
             app:layout_constraintEnd_toStartOf="@+id/togglePad" />
 
     </android.support.constraint.ConstraintLayout>
+
+    <ca.uwaterloo.cs446.teamdroids.technosync.visualization.AudioBar
+        android:id="@+id/barVisualizer"
+        android:layout_width="413dp"
+        android:layout_height="109dp"
+        app:layout_constraintBottom_toBottomOf="@+id/beatpad-layout"
+        tools:layout_editor_absoluteX="0dp" />
 
 </android.support.constraint.ConstraintLayout>
