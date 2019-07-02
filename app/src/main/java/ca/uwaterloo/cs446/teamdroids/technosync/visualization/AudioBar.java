@@ -4,9 +4,12 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.media.audiofx.Visualizer;
 import android.support.annotation.Nullable;
+import android.support.constraint.solver.widgets.Rectangle;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -20,22 +23,9 @@ public class AudioBar extends View {
     private byte[] audioBytes;
     protected Paint paint;
 
-    private static final int BAR_MAX_POINTS = 120;
-    private static final int BAR_MIN_POINTS = 3;
-
-    private int mMaxBatchCount = 4;
-
-    private int nPoints;
-
-    private float[] mSrcY, mDestY;
-
-    private float mBarWidth;
-    private Rect mClipBounds;
-
-    private int nBatchCount;
-
-    private Random mRandom;
-
+    private Path mSpikePath;
+    private int mRadius;
+    private int nPoints = 1000;
 
     //View Constructors
     public AudioBar(Context context) {
@@ -54,21 +44,9 @@ public class AudioBar extends View {
         paint = new Paint();
         paint.setColor(Color.BLACK);
 
-        nPoints = (int) (BAR_MAX_POINTS * 2);
-        if (nPoints < BAR_MIN_POINTS)
-            nPoints = BAR_MIN_POINTS;
+        mRadius = -1;
 
-        mBarWidth = -1;
-        nBatchCount = 0;
-
-
-
-        mRandom = new Random();
-
-        mClipBounds = new Rect();
-
-        mSrcY = new float[nPoints];
-        mDestY = new float[nPoints];
+        mSpikePath = new Path();
     }
 
 
@@ -96,67 +74,46 @@ public class AudioBar extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        if (mBarWidth == -1) {
 
-            canvas.getClipBounds(mClipBounds);
+        paint.setColor(Color.BLACK);
+        paint.setStyle(Paint.Style.FILL);
 
-            mBarWidth = canvas.getWidth() / nPoints;
+        canvas.drawRect((float) 0.0 , (float) 0.0, (float)canvas.getWidth(), (float)canvas.getHeight(), paint);
 
-            //initialize points
-            for (int i = 0; i < mSrcY.length; i++) {
-                float posY;
 
-                    posY = mClipBounds.bottom;
+        paint.setColor(Color.RED);
 
-                mSrcY[i] = posY;
-                mDestY[i] = posY;
+
+        for(int i = 0; i < audioBytes.length; i++) {
+
+            float x = audioBytes[i];
+            float value = (float) audioBytes[i] / 128;
+            float width = (float) canvas.getWidth() / audioBytes.length;
+            float height =  (float) (canvas.getHeight() / 2) * value;
+
+            float lx = i * width;
+            float ly = (float) canvas.getHeight() / 2;
+            float rx = (i + 1) * width;
+            float ry = ((float)canvas.getHeight() / 2) + height;
+
+            RectF rectF = new RectF();
+            if(ry < ly){
+                rectF.set(lx, ry, rx, ly);
             }
+            else{
+                rectF.set(lx, ly, rx, ry);
+            }
+
+
+
+            paint.setColor(Color.RED);
+            canvas.drawRect(rectF, paint);
+
+
+            paint.setColor(Color.WHITE);
+            canvas.drawText(String.valueOf(audioBytes[i]), 0, 0, paint);
         }
 
-        //create the path and draw
-        if (audioBytes != null) {
-
-            if (audioBytes.length == 0) {
-                return;
-            }
-
-            //find the destination bezier point for a batch
-            if (nBatchCount == 0) {
-                float randPosY = mDestY[mRandom.nextInt(nPoints)];
-                for (int i = 0; i < mSrcY.length; i++) {
-
-                    int x = (int) Math.ceil((i + 1) * (audioBytes.length / nPoints));
-                    int t = 0;
-                    if (x < 1024)
-                        t = canvas.getHeight() +
-                                ((byte) (Math.abs(audioBytes[x]) + 128)) * canvas.getHeight() / 128;
-
-                    float posY;
-                        posY = mClipBounds.top + t;
-
-                    //change the source and destination y
-                    mSrcY[i] = mDestY[i];
-                    mDestY[i] = posY;
-                }
-
-                mDestY[mSrcY.length - 1] = randPosY;
-            }
-
-            //increment batch count
-            nBatchCount++;
-
-            //calculate bar position and draw
-            for (int i = 0; i < mSrcY.length; i++) {
-                float barY = mSrcY[i] + (((float) (nBatchCount) / mMaxBatchCount) * (mDestY[i] - mSrcY[i]));
-                float barX = (i * mBarWidth) + (mBarWidth / 2);
-                canvas.drawLine(barX, canvas.getHeight(), barX, barY, paint);
-            }
-
-            //reset the batch count
-            if (nBatchCount == mMaxBatchCount)
-                nBatchCount = 0;
-
-        }
 
         super.onDraw(canvas);
     }
