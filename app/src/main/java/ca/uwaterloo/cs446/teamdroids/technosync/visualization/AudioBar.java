@@ -23,10 +23,6 @@ public class AudioBar extends View {
     private byte[] audioBytes;
     protected Paint paint;
 
-    private Path mSpikePath;
-    private int mRadius;
-    private int nPoints = 1000;
-
     //View Constructors
     public AudioBar(Context context) {
         super(context);
@@ -43,12 +39,7 @@ public class AudioBar extends View {
     protected void init() {
         paint = new Paint();
         paint.setColor(Color.BLACK);
-
-        mRadius = -1;
-
-        mSpikePath = new Path();
     }
-
 
     //Link view with visualization data
     public void setPlayer(int audioSessionId) {
