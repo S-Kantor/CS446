@@ -48,7 +48,7 @@ public class AudioBar extends View {
     //https://github.com/gauravk95/audio-visualizer-android/blob/master/audiovisualizer/src/main/java/com/gauravk/audiovisualizer/visualizer/BarVisualizer.java
     public void setPlayer(int audioSessionId) {
         visualizer = new Visualizer(audioSessionId);
-        visualizer.setCaptureSize(Visualizer.getCaptureSizeRange()[1]);
+        //visualizer.setCaptureSize(Visualizer.getCaptureSizeRange()[0]);
 
         visualizer.setDataCaptureListener(new Visualizer.OnDataCaptureListener() {
             @Override
@@ -71,39 +71,42 @@ public class AudioBar extends View {
     @Override
     protected void onDraw(Canvas canvas) {
 
-        //Normalize waveform
-        float[] normalizedWaveForm = new float[audioBytes.length];
-        for(int i = 0; i < audioBytes.length; i++){
-            normalizedWaveForm[i] = ((float) audioBytes[i] + 128) / 256;
+        if(audioBytes != null && audioBytes.length > 0){
+            //Normalize waveform
+            float[] normalizedWaveForm = new float[audioBytes.length];
+            for(int i = 0; i < audioBytes.length; i++){
+                normalizedWaveForm[i] = ((float) audioBytes[i] + 128) / 256;
+            }
+
+
+            //Draw bars
+            for(int i = 0; i < NUMBER_OF_BARS; i++) {
+
+                //Get value based on current sample point
+                int barWidthtoWaveForm = normalizedWaveForm.length / NUMBER_OF_BARS;
+                int samplingIndex = (i * barWidthtoWaveForm) / 2;
+                float value = normalizedWaveForm[samplingIndex];
+
+                //Calculate bar width and height in relation to on-screen view
+                float width = (float) canvas.getWidth() / NUMBER_OF_BARS;
+                float height =  (float) canvas.getHeight() * value;
+
+                //Calculate bar coordinates
+                float lx = i * width;
+                float ly = (float) canvas.getHeight() - height;
+                float rx = (i + 1) * width;
+                float ry = ((float)canvas.getHeight());
+
+
+                //Draw rectangle
+                RectF rectF = new RectF();
+                rectF.set(lx, ly, rx, ry);
+                paint.setStyle(Paint.Style.FILL);
+                canvas.drawRect(rectF, paint);
+            }
+
+
         }
-
-
-        //Draw bars
-        for(int i = 0; i < NUMBER_OF_BARS; i++) {
-
-            //Get value based on current sample point
-            int barWidthtoWaveForm = normalizedWaveForm.length / NUMBER_OF_BARS;
-            int samplingIndex = (i * barWidthtoWaveForm) / 2;
-            float value = normalizedWaveForm[samplingIndex];
-
-            //Calculate bar width and height in relation to on-screen view
-            float width = (float) canvas.getWidth() / NUMBER_OF_BARS;
-            float height =  (float) canvas.getHeight() * value;
-
-            //Calculate bar coordinates
-            float lx = i * width;
-            float ly = (float) canvas.getHeight() - height;
-            float rx = (i + 1) * width;
-            float ry = ((float)canvas.getHeight());
-
-
-            //Draw rectangle
-            RectF rectF = new RectF();
-            rectF.set(lx, ly, rx, ry);
-            paint.setStyle(Paint.Style.FILL);
-            canvas.drawRect(rectF, paint);
-        }
-
 
         super.onDraw(canvas);
     }

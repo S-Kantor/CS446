@@ -5,6 +5,7 @@ import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
 import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;
+import android.media.SoundPool;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -12,6 +13,7 @@ import android.util.Base64;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -48,6 +50,7 @@ public class CreationView extends AppCompatActivity {
     boolean onLoopPad = true;
     boolean overridePublish = false;
     boolean firstLoad = true;
+    boolean loading = false;
 
 
     //Get the id of a resource by string
@@ -70,7 +73,6 @@ public class CreationView extends AppCompatActivity {
 
     //Define action for when toggle switch is clicked
     private View.OnClickListener toggleViewType = new View.OnClickListener() {
-
         public void onClick(View v) {
             //Get image from view
             ImageView imageView = (ImageView) v;
@@ -228,11 +230,34 @@ public class CreationView extends AppCompatActivity {
     }
 
 
+    //Set State to Loading
+    private void startLoading(){
+        //Disable all interaction
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+
+        //Display Loader
+        findViewById(R.id.pBar).setVisibility(View.VISIBLE);
+    }
+
+    private void stopLoading(){
+        //Enable Interaction
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+
+        //Hide Loader
+        findViewById(R.id.pBar).setVisibility(View.INVISIBLE);
+    }
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_creation_view);
+
+        //Setup Loading
+        startLoading();
+
 
         // Set up the toolbar
         toolbar = findViewById(R.id.tool_bar);
@@ -304,8 +329,22 @@ public class CreationView extends AppCompatActivity {
             instrumentPad.tiles.add(instrument);
         }
 
+
+
+
         //Setup audioengine
         audioEngine.setupAudioEngine(getApplicationContext());
+
+        //Setup stop loading
+        audioEngine.getSoundPool().setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
+            @Override
+            public void onLoadComplete(SoundPool soundPool, int sampleId,
+                                       int status) {
+
+                stopLoading();
+            }
+        });
+
         loopPad.publishTileList();
         instrumentPad.publishTileList();
 
