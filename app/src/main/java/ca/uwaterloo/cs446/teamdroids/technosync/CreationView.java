@@ -153,7 +153,10 @@ public class CreationView extends AppCompatActivity {
             @Override
             public void onAnimationEnd(Animator animation) {
                 //Determine image
-                if(instrumentPad.tiles.get(tileId).getDisabled()){
+                if(instrumentPad.tiles.get(tileId).getDisabled() && !loopabale){
+                    imageView.setBackgroundResource(R.drawable.missing_button);
+                }
+                else if(loopPad.tiles.get(tileId).getDisabled() && loopabale){
                     imageView.setBackgroundResource(R.drawable.missing_button);
                 }
                 else{
@@ -211,7 +214,7 @@ public class CreationView extends AppCompatActivity {
             }
             else {
                 //Determine image
-                if(instrumentPad.tiles.get(tileId).getDisabled()){
+                if(loopPad.tiles.get(tileId).getDisabled()){
                     loopButtonImage.setBackgroundResource(R.drawable.missing_button);
                 } else{
                     loopButtonImage.setBackgroundResource(R.drawable.loop_button);
