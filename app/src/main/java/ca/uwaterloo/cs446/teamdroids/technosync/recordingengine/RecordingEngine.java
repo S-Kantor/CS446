@@ -2,6 +2,8 @@ package ca.uwaterloo.cs446.teamdroids.technosync.recordingengine;
 
 import android.util.Base64;
 
+import com.google.gson.Gson;
+
 import java.io.ByteArrayInputStream;
 import java.io.ObjectInputStream;
 import java.time.ZonedDateTime;
@@ -18,9 +20,11 @@ public class RecordingEngine extends Subscriber {
 
     CurrentState currentState;
     RecordingList recordingList;
+    boolean recording = false;
 
     //Record changes to instrument pad
     public void instrumentPadUpdate(Tile tile){
+        if(!recording) return;
         RecordingEntry recordingEntry = new RecordingEntry(tile.getFileString(), false);
         recordingList.newEntry(recordingEntry);
     }
@@ -28,6 +32,8 @@ public class RecordingEngine extends Subscriber {
 
     //Record changes playing beats
     public void loopPadUpdate(StateArray stateArray){
+        if(!recording) return;
+
         //Get hit tile value
         Integer changedTile = currentState.determineChange(stateArray);
         String fileString = currentState.tileIdToFileName(changedTile, true);
@@ -45,11 +51,35 @@ public class RecordingEngine extends Subscriber {
         recordingList.newEntry(new RecordingEntry(fileString, true));
     }
 
+    //Send local recording to server
+    public void sendRecording(){
+        //Convert recording list to JSON
+        Gson gson = new Gson();
+        String json = gson.toJson(recordingList);
+
+        //
+        String z = "";
+    }
+
 
     //Receive event from event bus
     public void notify(EventPackage eventPackage){
         try {
             EventType eventType = eventPackage.getEventType();
+
+
+            //Handle events with no data
+            //Start recording
+            if (eventType == EventType.RECORDING_START) {
+                recording = true;
+                return;
+            }
+            //Stop Recording
+            else if (eventType == EventType.RECORDING_END) {
+                recording = false;
+                sendRecording();
+                return;
+            }
 
             //Get stream of event data
             byte bytes[] = Base64.decode(eventPackage.getSerializedData().getBytes(), 0);
@@ -71,17 +101,24 @@ public class RecordingEngine extends Subscriber {
             else if (eventType == EventType.INSTRUMENTPAD_SOUND_HIT) {
                 Tile tile = (Tile) objectInputStream.readObject();
                 instrumentPadUpdate(tile);
+
             }
             //Update loop playback
             else if (eventType == EventType.LOOPPAD_STATE_UPDATE) {
                 StateArray stateArray = (StateArray) objectInputStream.readObject();
                 loopPadUpdate(stateArray);
             }
+
         }
         catch(Exception e){
             //Error
             // TODO needs logger.
         }
+    }
+
+    //Get recording status
+    public boolean isRecording(){
+        return recording;
     }
 
 

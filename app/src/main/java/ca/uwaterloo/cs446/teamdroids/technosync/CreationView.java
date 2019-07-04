@@ -55,6 +55,7 @@ public class CreationView extends AppCompatActivity {
     boolean loading = false;
 
 
+
     //Get the id of a resource by string
     public static int getResId(String resName, Class<?> c) {
         try {
@@ -92,6 +93,33 @@ public class CreationView extends AppCompatActivity {
             }
         }
     };
+
+    //Define action for when record is clicked
+    //Define action for when toggle switch is clicked
+    private View.OnClickListener toggleRecord = new View.OnClickListener() {
+        public void onClick(View v) {
+            //Get image from view
+            ImageView imageView = (ImageView) v;
+
+            //End recording
+            if(recordingEngine.isRecording()){
+                EventPackage eventPackage = new EventPackage();
+                eventPackage.setEventType(EventType.RECORDING_END);
+                eventPackage.setSerializedData("---");
+                eventBus.newEvent(eventPackage);
+                finishActivity(0);
+            }
+            //Start Recording
+            else{
+                EventPackage eventPackage = new EventPackage();
+                eventPackage.setEventType(EventType.RECORDING_START);
+                eventPackage.setSerializedData("----");
+                eventBus.newEvent(eventPackage);
+                imageView.setBackgroundResource(R.drawable.record_button_progress);
+            }
+        }
+    };
+
 
 
     //Define action for when loop button is clicked
@@ -353,6 +381,12 @@ public class CreationView extends AppCompatActivity {
                 stopLoading();
             }
         });
+
+
+        //Setup recording button
+        ImageView recordingButton = (ImageView) findViewById(R.id.recordPad);
+        recordingButton.setOnClickListener(toggleRecord);
+        recordingButton.setBackgroundResource(R.drawable.record_button);
 
         loopPad.publishTileList();
         instrumentPad.publishTileList();

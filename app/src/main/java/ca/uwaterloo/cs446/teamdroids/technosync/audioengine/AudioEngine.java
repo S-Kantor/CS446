@@ -53,6 +53,9 @@ public class AudioEngine extends Subscriber {
         try {
             EventType eventType = eventPackage.getEventType();
 
+            //Temporary fix fo deserialization exception
+            if(eventType == EventType.RECORDING_END || eventType == EventType.RECORDING_START) return;
+
             //Get stream of event data
             byte bytes[] = Base64.decode(eventPackage.getSerializedData().getBytes(), 0);
             ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
