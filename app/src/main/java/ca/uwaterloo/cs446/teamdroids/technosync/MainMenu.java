@@ -32,7 +32,6 @@ public class MainMenu extends AppCompatActivity {
                 Intent drumPadIntent = new Intent(getBaseContext(), CreationView.class);
 
                 //Clear activity stack and start new activity
-                drumPadIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(drumPadIntent);
             }
         });

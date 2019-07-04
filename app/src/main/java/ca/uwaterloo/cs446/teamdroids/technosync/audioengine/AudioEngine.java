@@ -93,4 +93,8 @@ public class AudioEngine extends Subscriber {
         playbackManager = new PlaybackManager();
         this.applicationContext = applicationContext;
     }
+
+    public SoundPool getSoundPool() {
+        return soundPool;
+    }
 }
