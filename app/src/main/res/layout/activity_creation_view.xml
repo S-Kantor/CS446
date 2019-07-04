@@ -38,8 +38,8 @@
         app:layout_constraintBottom_toBottomOf="@+id/barVisualizer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout2"
-        app:layout_constraintVertical_bias="0.38" />
+        app:layout_constraintTop_toBottomOf="@+id/togglePad"
+        app:layout_constraintVertical_bias="0.060000002" />
 
     <ProgressBar
         android:id="@+id/pBar"

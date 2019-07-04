@@ -10,6 +10,8 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import ca.uwaterloo.cs446.teamdroids.technosync.api.ApiPath;
+import ca.uwaterloo.cs446.teamdroids.technosync.api.WebApi;
 import ca.uwaterloo.cs446.teamdroids.technosync.common.StateArray;
 import ca.uwaterloo.cs446.teamdroids.technosync.common.Tile;
 import ca.uwaterloo.cs446.teamdroids.technosync.common.TileList;
@@ -20,6 +22,7 @@ public class RecordingEngine extends Subscriber {
 
     CurrentState currentState;
     RecordingList recordingList;
+    WebApi webApi;
     boolean recording = false;
 
     //Record changes to instrument pad
@@ -57,10 +60,9 @@ public class RecordingEngine extends Subscriber {
         Gson gson = new Gson();
         String json = gson.toJson(recordingList);
 
-        //
-        String z = "";
+        //Upload
+        webApi.post(ApiPath.PUBLISH_RECORDING, json);
     }
-
 
     //Receive event from event bus
     public void notify(EventPackage eventPackage){
@@ -123,10 +125,12 @@ public class RecordingEngine extends Subscriber {
 
 
     //Initialize
-    public RecordingEngine(){
-        currentState = new CurrentState();
-        recordingList = new RecordingList();
+    public RecordingEngine(WebApi webApi){
+        this.currentState = new CurrentState();
+        this.recordingList = new RecordingList();
+        this.webApi = webApi;
     }
+
 
 
 

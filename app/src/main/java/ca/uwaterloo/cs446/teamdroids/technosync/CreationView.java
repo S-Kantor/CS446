@@ -24,6 +24,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
+import ca.uwaterloo.cs446.teamdroids.technosync.api.WebApi;
 import ca.uwaterloo.cs446.teamdroids.technosync.audioengine.AudioEngine;
 import ca.uwaterloo.cs446.teamdroids.technosync.common.InstrumentPad;
 import ca.uwaterloo.cs446.teamdroids.technosync.common.LoopPad;
@@ -47,6 +48,7 @@ public class CreationView extends AppCompatActivity {
     AudioEngine audioEngine;
     RecordingEngine recordingEngine;
     EventBus eventBus;
+    WebApi webApi;
 
 
     boolean onLoopPad = true;
@@ -324,9 +326,12 @@ public class CreationView extends AppCompatActivity {
         AudioBar audioBar = (AudioBar) findViewById(R.id.barVisualizer);
         audioBar.setPlayer(0);
 
+        //Setup WebApi
+        webApi = new WebApi();
+
         //Setup eventbus
         audioEngine = new AudioEngine();
-        recordingEngine = new RecordingEngine();
+        recordingEngine = new RecordingEngine(webApi);
         instrumentPad = new InstrumentPad();
         loopPad = new LoopPad();
         eventBus = new EventBus();
