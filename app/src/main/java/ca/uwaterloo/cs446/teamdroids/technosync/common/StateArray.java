@@ -10,5 +10,6 @@ public class StateArray implements Serializable {
     private int stateArray[];
     public void setStateArray(int stateArray[]){ this.stateArray = stateArray;}
     public int[] getStateArray() { return  stateArray;}
+    public int getLength() {return stateArray.length;}
 }
 

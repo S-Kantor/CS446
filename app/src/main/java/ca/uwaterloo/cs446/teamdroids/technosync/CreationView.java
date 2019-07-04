@@ -31,6 +31,7 @@ import ca.uwaterloo.cs446.teamdroids.technosync.common.TileList;
 import ca.uwaterloo.cs446.teamdroids.technosync.eventbus.EventBus;
 import ca.uwaterloo.cs446.teamdroids.technosync.eventbus.EventPackage;
 import ca.uwaterloo.cs446.teamdroids.technosync.eventbus.EventType;
+import ca.uwaterloo.cs446.teamdroids.technosync.recordingengine.RecordingEngine;
 import ca.uwaterloo.cs446.teamdroids.technosync.visualization.AudioBar;
 
 public class CreationView extends AppCompatActivity {
@@ -42,6 +43,7 @@ public class CreationView extends AppCompatActivity {
     LoopPad loopPad;
     InstrumentPad instrumentPad;
     AudioEngine audioEngine;
+    RecordingEngine recordingEngine;
     EventBus eventBus;
 
 
@@ -262,18 +264,20 @@ public class CreationView extends AppCompatActivity {
         });
 
 
-        //
+        //Setup Visualization
         AudioBar audioBar = (AudioBar) findViewById(R.id.barVisualizer);
         audioBar.setPlayer(0);
 
         //Setup eventbus
         audioEngine = new AudioEngine();
+        recordingEngine = new RecordingEngine();
         instrumentPad = new InstrumentPad();
         loopPad = new LoopPad();
         eventBus = new EventBus();
 
         //Register subscribers
         eventBus.register(audioEngine);
+        eventBus.register(recordingEngine);
 
         //Register publishers
         loopPad.setEventBus(eventBus);
@@ -293,9 +297,11 @@ public class CreationView extends AppCompatActivity {
             else {
                 String fileName = "prototype_loop" + i;
                 current.setFileId(getResId(fileName, R.raw.class));
+                current.setFileString(fileName);
             }
 
             instrument.setFileId(getResId("prototype_instrument" +  i, R.raw.class));
+            instrument.setFileString("prototype_instrument" +  i);
             instrument.setLoopable(false);
             current.setLoopable(true);
             //instrument.setDisabled(true);
