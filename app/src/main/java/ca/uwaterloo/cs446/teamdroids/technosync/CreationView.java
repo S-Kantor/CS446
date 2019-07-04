@@ -107,7 +107,7 @@ public class CreationView extends AppCompatActivity {
                 eventPackage.setEventType(EventType.RECORDING_END);
                 eventPackage.setSerializedData("---");
                 eventBus.newEvent(eventPackage);
-                finishActivity(0);
+                CreationView.super.onBackPressed();
             }
             //Start Recording
             else{
