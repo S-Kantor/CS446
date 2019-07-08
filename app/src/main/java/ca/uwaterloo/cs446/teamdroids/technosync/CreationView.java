@@ -310,22 +310,13 @@ public class CreationView extends AppCompatActivity {
         int resId = getResources().getIdentifier("togglePad", "id", getPackageName());
         ImageView toggleButton = (ImageView) findViewById(resId);
         toggleButton.setBackgroundResource(R.drawable.note_button);
-        //toggleButton.setOnClickListener(toggleViewType);
+        toggleButton.setOnClickListener(toggleViewType);
 
         Button button = findViewById(R.id.notePadLauncher);
-        toggleButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent myIntent = new Intent(CreationView.this, RecordingView.class);
-                startActivity(myIntent);
-            }
-        });
-
-        Button notePadLauncher = findViewById(R.id.notePadLauncher);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent myIntent = new Intent(CreationView.this, RecordingView.class);
+                Intent myIntent = new Intent(CreationView.this, NotePad.class);
                 startActivity(myIntent);
             }
         });
@@ -333,7 +324,7 @@ public class CreationView extends AppCompatActivity {
 
         //Setup Visualization
         AudioBar audioBar = (AudioBar) findViewById(R.id.barVisualizer);
-//        audioBar.setPlayer(0);
+        audioBar.setPlayer(0);
 
         //Setup WebApi
         webApi = new WebApi();

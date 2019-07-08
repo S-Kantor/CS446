@@ -22,7 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class RecordingView extends AppCompatActivity {
+public class CustomRecordingView extends AppCompatActivity {
 
     private static final String LOG_TAG = "AudioRecordTest";
     private static final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
@@ -196,7 +196,7 @@ public class RecordingView extends AppCompatActivity {
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
 
-        setContentView(R.layout.activity_recording_view);
+        setContentView(R.layout.activity_custom_recording_view);
 
         ActivityCompat.requestPermissions(this, permissions, REQUEST_RECORD_AUDIO_PERMISSION);
 

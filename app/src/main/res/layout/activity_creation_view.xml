@@ -298,24 +298,13 @@
             app:layout_constraintBottom_toBottomOf="@+id/togglePad"
             app:layout_constraintEnd_toStartOf="@+id/togglePad" />
 
-        <Button
-            android:id="@+id/recordPadLauncher"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="12dp"
-            android:layout_marginRight="12dp"
-            android:text="Go To NotePad"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@+id/notePadLauncher"
-            app:layout_constraintEnd_toStartOf="@+id/notePadLauncher" />
-
     </android.support.constraint.ConstraintLayout>
 
-    <!--<ca.uwaterloo.cs446.teamdroids.technosync.visualization.AudioBar-->
-        <!--android:id="@+id/barVisualizer"-->
-        <!--android:layout_width="413dp"-->
-        <!--android:layout_height="109dp"-->
-        <!--app:layout_constraintBottom_toBottomOf="@+id/beatpad-layout"-->
-        <!--tools:layout_editor_absoluteX="0dp" />-->
+    <ca.uwaterloo.cs446.teamdroids.technosync.visualization.AudioBar
+        android:id="@+id/barVisualizer"
+        android:layout_width="413dp"
+        android:layout_height="109dp"
+        app:layout_constraintBottom_toBottomOf="@+id/beatpad-layout"
+        tools:layout_editor_absoluteX="0dp" />
 
 </android.support.constraint.ConstraintLayout>

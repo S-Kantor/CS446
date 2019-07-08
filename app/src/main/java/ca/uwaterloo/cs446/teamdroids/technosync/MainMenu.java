@@ -36,5 +36,20 @@ public class MainMenu extends AppCompatActivity {
             }
         });
 
+        //Get Buttons
+        Button recordButton = (Button) findViewById(R.id.recordAudioButton);
+
+        //Setup Link to Create
+        recordButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Open Music  Creation Window
+                Intent recordCustomAudio = new Intent(getBaseContext(), CustomRecordingView.class);
+
+                //Clear activity stack and start new activity
+                startActivity(recordCustomAudio);
+            }
+        });
+
     }
 }
