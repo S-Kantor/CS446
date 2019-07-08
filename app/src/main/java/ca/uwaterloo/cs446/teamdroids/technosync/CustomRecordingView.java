@@ -274,8 +274,7 @@ public class CustomRecordingView extends AppCompatActivity {
             }
 
             ((TextView) convertView.findViewById(R.id.fileName)).setText(getFileNameFromPath(getItem(position)));
-            ((TextView) convertView.findViewById(R.id.fileName))
-                    .setOnClickListener(new View.OnClickListener() {
+            convertView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
                             setSelectedFileText(position);
