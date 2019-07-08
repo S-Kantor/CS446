@@ -6,7 +6,8 @@
     <TextView
         android:id="@+id/fileName"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Name" />
+        android:layout_height="48dp"
+        android:gravity="center_vertical"
+        android:text="long string here!" />
 
 </LinearLayout>

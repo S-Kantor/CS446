@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -13,7 +14,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -35,6 +35,7 @@ public class RecordingView extends AppCompatActivity {
     private Button playButton = null;
     private Button recordButton = null;
     private ListView fileListView = null;
+    private ListViewAdapter myListAdapter = null;
 
     boolean mStartRecording = true;
     boolean mStartPlaying = true;
@@ -58,23 +59,27 @@ public class RecordingView extends AppCompatActivity {
     private void onRecord(boolean start) {
         if (start) {
             startRecording();
+            playButton.setEnabled(false);
         } else {
             stopRecording();
+            playButton.setEnabled(true);
         }
     }
 
     private void onPlay(boolean start) {
         if (start) {
+            recordButton.setEnabled(false);
             startPlaying();
         } else {
             stopPlaying();
+            recordButton.setEnabled(true);
         }
     }
 
     private void startPlaying() {
         player = new MediaPlayer();
         try {
-            player.setDataSource(newFileName);
+            player.setDataSource(getFilePathFromSelectedText());
             player.prepare();
             player.start();
         } catch (IOException e) {
@@ -92,7 +97,7 @@ public class RecordingView extends AppCompatActivity {
         recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         recorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
         recorder.setOutputFile(newFileName);
-        recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+        recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
 
         try {
             recorder.prepare();
@@ -103,12 +108,20 @@ public class RecordingView extends AppCompatActivity {
         recorder.start();
     }
 
+    // A basic 250 ms delay is required because the codec cuts off the last ~200 ms.
     private void stopRecording() {
-        recorder.stop();
-        recorder.release();
-        recorder = null;
-        setSelectedFileText(-1);
-        updateList();
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                recorder.stop();
+                recorder.release();
+                recorder = null;
+                setSelectedFileText(-1);
+                updateList();
+                updateNewFileName();
+            }
+        }, 250);
     }
 
     private void setSelectedFileText(int position) {
@@ -120,30 +133,63 @@ public class RecordingView extends AppCompatActivity {
             }
         }
 
-        if (listOfUserBeatFileNames.size() > 0 && position < 0) {
-            String lastFile = listOfUserBeatFileNames.get(listOfUserBeatFileNames.size() - 1);
-            selectedFileTextView.setText(lastFile);
-            newFileName = lastFile;
-        } else if (listOfUserBeatFileNames.size() > 0) {
-            String file = listOfUserBeatFileNames.get(position);
-            selectedFileTextView.setText(file);
-            newFileName = file;
+        if (listOfUserBeatFileNames.size() == 0) {
+            // No files have been created so we can't play/select a file.
+            selectedFileTextView.setText("");
+            return;
         }
+
+        String file;
+
+        if (position < 0) {
+            file = listOfUserBeatFileNames.get(listOfUserBeatFileNames.size() - 1);
+        } else {
+            file = listOfUserBeatFileNames.get(position);
+        }
+        selectedFileTextView.setText(getFileNameFromPath(file));
     }
 
     private void updateList() {
-
         // Record to the internalDirectory for future playback.
         ArrayList<String> listOfUserBeats = new ArrayList<>();
         File[] listOfFiles = getFilesDir().listFiles();
         for (File file : listOfFiles) {
-            if (file.getName().startsWith("UserBeat_")) {
-                listOfUserBeats.add(file.getAbsolutePath());
+            listOfUserBeats.add(file.getAbsolutePath());
+        }
+        myListAdapter.clear();
+        myListAdapter.addAll(listOfUserBeats);
+        myListAdapter.notifyDataSetChanged();
+    }
+
+    private String getFileNameFromPath(String filePath) {
+        int lastSlash = filePath.lastIndexOf("/");
+        return filePath.substring(lastSlash + 1);
+    }
+
+    private String getFilePathFromSelectedText() {
+        String selectedFileName = selectedFileTextView.getText().toString();
+
+        File[] listOfFiles = getFilesDir().listFiles();
+        for (File file : listOfFiles) {
+            if (getFileNameFromPath(file.getAbsolutePath()).equalsIgnoreCase(selectedFileName)) {
+                return file.getAbsolutePath();
             }
         }
 
-        ListViewAdapter adapter = new ListViewAdapter(getApplicationContext(), listOfUserBeats);
-        fileListView.setAdapter(adapter);
+        return "";
+    }
+
+    private void updateNewFileName() {
+        // Record to the external cache directory for visibility
+        // TODO: If we need to store other types of files, we need to update this to only count
+        // TODO: the number of UserBeat_* files.
+        File[] listOfFiles = getFilesDir().listFiles();
+        newFileName = getFilesDir().getAbsolutePath();
+        if (listOfFiles.length > 0) {
+            newFileName += "/UserBeat_" + (listOfFiles.length + 1) + ".mp4";
+        } else {
+            newFileName += "/UserBeat_1.mp4";
+        }
     }
 
     @Override
@@ -154,36 +200,23 @@ public class RecordingView extends AppCompatActivity {
 
         ActivityCompat.requestPermissions(this, permissions, REQUEST_RECORD_AUDIO_PERMISSION);
 
-        // Record to the internalDirectory for future playback.
-        ArrayList<String> listOfUserBeats = new ArrayList<>();
-        File[] listOfFiles = getFilesDir().listFiles();
-        for (File file : listOfFiles) {
-            if (file.getName().startsWith("UserBeat_")) {
-                listOfUserBeats.add(file.getAbsolutePath());
-            }
-        }
-
-        int numFiles = listOfUserBeats.size();
-
-        // Record to the external cache directory for visibility
-        newFileName = getFilesDir().getAbsolutePath();
-        if (numFiles > 0) {
-            newFileName += "/UserBeat_" + numFiles + ".mp4";
-        } else {
-            newFileName += "/UserBeat_1.mp4";
-        }
-
         recordButton = findViewById(R.id.recordButton);
         playButton = findViewById(R.id.playButton);
         selectedFileTextView = findViewById(R.id.selectedFile);
         fileListView = findViewById(R.id.listOfFileNames);
 
-        updateList();
 
-        selectedFileTextView.setText("");
-        if (numFiles > 0) {
-            selectedFileTextView.setText(newFileName);
+        ArrayList<String> fileNames = new ArrayList<>();
+        File[] files = getFilesDir().listFiles();
+        for (File file : files) {
+            fileNames.add(getFileNameFromPath(file.getAbsolutePath()));
         }
+        myListAdapter = new ListViewAdapter(this, fileNames);
+        fileListView.setAdapter(myListAdapter);
+
+        updateList();
+        updateNewFileName();
+        setSelectedFileText(-1);
 
         recordButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -240,8 +273,7 @@ public class RecordingView extends AppCompatActivity {
                 convertView = getLayoutInflater().inflate(R.layout.item_file, container, false);
             }
 
-            ((TextView) convertView.findViewById(R.id.fileName))
-                    .setText(getItem(position));
+            ((TextView) convertView.findViewById(R.id.fileName)).setText(getFileNameFromPath(getItem(position)));
             ((TextView) convertView.findViewById(R.id.fileName))
                     .setOnClickListener(new View.OnClickListener() {
                         @Override
