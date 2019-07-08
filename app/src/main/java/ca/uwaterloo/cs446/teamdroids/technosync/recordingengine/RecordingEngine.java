@@ -27,7 +27,7 @@ public class RecordingEngine extends Subscriber {
 
     //Record changes to instrument pad
     public void instrumentPadUpdate(Tile tile){
-        if(!recording) return;
+        if (!recording) return;
         RecordingEntry recordingEntry = new RecordingEntry(tile.getFileString(), false);
         recordingList.newEntry(recordingEntry);
     }
