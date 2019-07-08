@@ -25,6 +25,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".CreationView" />
+        <activity android:name=".CustomRecordingView" />
     </application>
 
 
