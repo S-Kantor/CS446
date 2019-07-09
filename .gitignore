@@ -34,6 +34,10 @@ proguard/
 # Android Studio captures folder
 captures/
 
+# Python venv
+venv/*
+.venv/*
+
 # IntelliJ
 *.iml
 **/.idea/*
