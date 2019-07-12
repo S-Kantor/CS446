@@ -1,6 +1,7 @@
 package ca.uwaterloo.cs446.teamdroids.technosync;
 
 import android.content.Intent;
+import android.graphics.drawable.AnimationDrawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -10,9 +11,20 @@ public class MainMenu extends AppCompatActivity {
 
     public Button practiceButton;
 
+
+    //Animate background
+    private void animateBackground(){
+        AnimationDrawable animationDrawable = (AnimationDrawable) findViewById(R.id.main_screen_layout).getBackground();
+        animationDrawable.setEnterFadeDuration(10);
+        animationDrawable.setExitFadeDuration(5000);
+        animationDrawable.start();
+    }
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
 
         try {
             this.getSupportActionBar().hide();
@@ -37,7 +49,7 @@ public class MainMenu extends AppCompatActivity {
         });
 
         //Get Buttons
-        Button recordButton = (Button) findViewById(R.id.recordAudioButton);
+        Button recordButton = (Button) findViewById(R.id.audioArchive);
 
         //Setup Link to Create
         recordButton.setOnClickListener(new View.OnClickListener() {
@@ -50,6 +62,9 @@ public class MainMenu extends AppCompatActivity {
                 startActivity(recordCustomAudio);
             }
         });
+
+        //Animate Background
+        animateBackground();
 
     }
 }
