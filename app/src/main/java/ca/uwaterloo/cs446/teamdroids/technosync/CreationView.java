@@ -34,12 +34,14 @@ import ca.uwaterloo.cs446.teamdroids.technosync.common.TileList;
 import ca.uwaterloo.cs446.teamdroids.technosync.eventbus.EventBus;
 import ca.uwaterloo.cs446.teamdroids.technosync.eventbus.EventPackage;
 import ca.uwaterloo.cs446.teamdroids.technosync.eventbus.EventType;
+import ca.uwaterloo.cs446.teamdroids.technosync.presets.PresetManager;
 import ca.uwaterloo.cs446.teamdroids.technosync.recordingengine.RecordingEngine;
 import ca.uwaterloo.cs446.teamdroids.technosync.visualization.AudioBar;
 
 public class CreationView extends AppCompatActivity {
 
     private static final String MISSING_MESSAGE = "Button Not Assigned! (PROTOTYPE ONLY)";
+    private static final String IS_PLAYING_AUDIO = "Please Stop Current Playing Loops Before Recording";
 
     private Toolbar toolbar;
 
@@ -49,25 +51,10 @@ public class CreationView extends AppCompatActivity {
     RecordingEngine recordingEngine;
     EventBus eventBus;
     WebApi webApi;
-
+    PresetManager presetManager;
 
     boolean onLoopPad = true;
-    boolean overridePublish = false;
     boolean firstLoad = true;
-    boolean loading = false;
-
-
-
-    //Get the id of a resource by string
-    public static int getResId(String resName, Class<?> c) {
-        try {
-            Field idField = c.getDeclaredField(resName);
-            return idField.getInt(idField);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return -1;
-        }
-    }
 
     //Get id string of a view
     public static String getId(View view) {
@@ -102,6 +89,12 @@ public class CreationView extends AppCompatActivity {
         public void onClick(View v) {
             //Get image from view
             ImageView imageView = (ImageView) v;
+
+            //Check for current status
+            if(audioEngine.isPlayingAudio()){
+                Toast.makeText(getApplicationContext(), IS_PLAYING_AUDIO, Toast.LENGTH_SHORT).show();
+                return;
+            }
 
             //End recording
             if(recordingEngine.isRecording()){
@@ -265,6 +258,21 @@ public class CreationView extends AppCompatActivity {
     }
 
 
+    //Set up Loop pad and Instrument Pad with new preset
+    private void setUpPreset(String presetName){
+        //Read file
+        presetManager.readNewPreset(presetName);
+
+        //Get tiles
+        loopPad.tiles = presetManager.getLoopPadTiles();
+        instrumentPad.tiles = presetManager.getInstrumentPadTiles();
+
+        //Publish changes
+        loopPad.publishTileList();
+        instrumentPad.publishTileList();
+    }
+
+
     //Set State to Loading
     private void startLoading(){
         //Disable all interaction
@@ -282,8 +290,6 @@ public class CreationView extends AppCompatActivity {
         //Hide Loader
         findViewById(R.id.pBar).setVisibility(View.INVISIBLE);
     }
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -312,6 +318,8 @@ public class CreationView extends AppCompatActivity {
         toggleButton.setBackgroundResource(R.drawable.note_button);
         toggleButton.setOnClickListener(toggleViewType);
 
+
+        /*
         Button button = findViewById(R.id.notePadLauncher);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -319,7 +327,7 @@ public class CreationView extends AppCompatActivity {
                 Intent myIntent = new Intent(CreationView.this, NotePad.class);
                 startActivity(myIntent);
             }
-        });
+        });*/
 
 
         //Setup Visualization
@@ -328,6 +336,9 @@ public class CreationView extends AppCompatActivity {
 
         //Setup WebApi
         webApi = new WebApi();
+
+        //Setup Preset Manager
+        presetManager = new PresetManager(getApplicationContext());
 
         //Setup eventbus
         audioEngine = new AudioEngine();
@@ -344,57 +355,26 @@ public class CreationView extends AppCompatActivity {
         loopPad.setEventBus(eventBus);
         instrumentPad.setEventBus(eventBus);
 
-        //Setup Loop pad with prototype loops
-        //This needs to be generalized later
-        for(int i = 1; i <= 25; i ++){
-            Tile current = new Tile();
-            Tile instrument = new Tile();
-            current.setTileId(i);
-            instrument.setTileId(i);
-
-            if(i > 16){
-                current.setDisabled(true);
-            }
-            else {
-                String fileName = "prototype_loop" + i;
-                current.setFileId(getResId(fileName, R.raw.class));
-                current.setFileString(fileName);
-            }
-
-            instrument.setFileId(getResId("prototype_instrument" +  i, R.raw.class));
-            instrument.setFileString("prototype_instrument" +  i);
-            instrument.setLoopable(false);
-            current.setLoopable(true);
-            //instrument.setDisabled(true);
-
-            loopPad.tiles.add(current);
-            instrumentPad.tiles.add(instrument);
-        }
-
-
-
-
         //Setup audioengine
         audioEngine.setupAudioEngine(getApplicationContext());
 
         //Setup stop loading
         audioEngine.getSoundPool().setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
             @Override
-            public void onLoadComplete(SoundPool soundPool, int sampleId,
-                                       int status) {
-
+            public void onLoadComplete(SoundPool soundPool, int sampleId, int status) {
                 stopLoading();
             }
         });
 
+
+        //Load Default Preset
+        setUpPreset("presetprototype");
 
         //Setup recording button
         ImageView recordingButton = (ImageView) findViewById(R.id.recordPad);
         recordingButton.setOnClickListener(toggleRecord);
         recordingButton.setBackgroundResource(R.drawable.record_button);
 
-        loopPad.publishTileList();
-        instrumentPad.publishTileList();
 
         //Display Loop View
         displayLoopPad();

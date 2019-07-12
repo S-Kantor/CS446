@@ -38,9 +38,12 @@ public class PlaybackManager {
         }
     }
 
+    public boolean isPlayingAudio(){return !tileToStream.isEmpty();}
 
     public PlaybackManager(){
         tileToStream = new HashMap<>();
     }
+
+
 
 }

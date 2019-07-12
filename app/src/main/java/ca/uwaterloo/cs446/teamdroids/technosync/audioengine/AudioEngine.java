@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.SoundPool;
 import android.util.Base64;
+import android.util.Log;
 
 import java.io.ByteArrayInputStream;
 import java.io.ObjectInputStream;
@@ -86,8 +87,12 @@ public class AudioEngine extends Subscriber {
         catch(Exception e){
             //Error
             // TODO needs logger.
+            Log.i("Error", e.toString());
         }
     }
+
+    //Get playback state
+    public boolean isPlayingAudio(){return  playbackManager.isPlayingAudio();}
 
     //Initialize SoundPool
     public void setupAudioEngine(Context applicationContext){
