@@ -49,7 +49,7 @@ public class MainMenu extends AppCompatActivity {
         });
 
         //Get Buttons
-        Button recordButton = (Button) findViewById(R.id.audioArchive);
+        Button recordButton = (Button) findViewById(R.id.recordAudioButton2);
 
         //Setup Link to Create
         recordButton.setOnClickListener(new View.OnClickListener() {
