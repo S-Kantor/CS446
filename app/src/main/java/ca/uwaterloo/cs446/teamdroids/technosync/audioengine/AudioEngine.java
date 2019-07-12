@@ -66,11 +66,13 @@ public class AudioEngine extends Subscriber {
             //Update collections of loops
             if (eventType == EventType.LOOPPAD_MAPPING_UPDATE) {
                 TileList tileList = (TileList) objectInputStream.readObject();
+                fileManager.unloadAllSoundIds(true);
                 fileManager.loadFilesFromTiles(tileList.getTiles(), soundPool, applicationContext);
             }
             //Update collections of instruments
             else if (eventType == EventType.INSTRUMENTPAD_MAPPING_UPDATE) {
                 TileList tileList = (TileList) objectInputStream.readObject();
+                fileManager.unloadAllSoundIds(false);
                 fileManager.loadFilesFromTiles(tileList.getTiles(), soundPool, applicationContext);
             }
             //Update loop playback
@@ -93,6 +95,11 @@ public class AudioEngine extends Subscriber {
 
     //Get playback state
     public boolean isPlayingAudio(){return  playbackManager.isPlayingAudio();}
+
+    public void resetAudioEngine(){
+        soundPool.release();
+        soundPool = new SoundPool(50, 3, 0);
+    }
 
     //Initialize SoundPool
     public void setupAudioEngine(Context applicationContext){

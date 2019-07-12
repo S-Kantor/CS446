@@ -3,13 +3,16 @@ package ca.uwaterloo.cs446.teamdroids.technosync;
 import android.animation.Animator;
 import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;
 import android.media.SoundPool;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Base64;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,6 +22,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -41,7 +45,7 @@ import ca.uwaterloo.cs446.teamdroids.technosync.visualization.AudioBar;
 public class CreationView extends AppCompatActivity {
 
     private static final String MISSING_MESSAGE = "Button Not Assigned! (PROTOTYPE ONLY)";
-    private static final String IS_PLAYING_AUDIO = "Please Stop Current Playing Loops Before Recording";
+    private static final String IS_PLAYING_AUDIO = "Please Stop Playing Loops Before Executing This Action";
 
     private Toolbar toolbar;
 
@@ -55,6 +59,10 @@ public class CreationView extends AppCompatActivity {
 
     boolean onLoopPad = true;
     boolean firstLoad = true;
+
+    //Loading counters
+    int loadedCount = 0;
+    int maxCount = 0;
 
     //Get id string of a view
     public static String getId(View view) {
@@ -249,6 +257,44 @@ public class CreationView extends AppCompatActivity {
 
     }
 
+    //Display Preset Selector
+    private void displayPresetSelector(){
+
+        //Check playback status
+        if(audioEngine.isPlayingAudio()){
+            Toast.makeText(getApplicationContext(), IS_PLAYING_AUDIO, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // setup the alert builder
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Choose a Preset");
+
+        //Get list of all presets
+        List<String> presets = presetManager.getListOfPresets();
+        String[] presetsArray = new String[presets.size()];
+        presetsArray = presets.toArray(presetsArray);
+
+        //Remove preset from string and capitalize first letter
+        for(int i = 0; i < presetsArray.length; i++){
+            presetsArray[i] = presetsArray[i].substring(6);
+            presetsArray[i] = presetsArray[i].substring(0, 1).toUpperCase() + presetsArray[i].substring(1);
+        }
+
+        //Setup List
+        builder.setItems(presetsArray, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //Change preset
+                setUpPreset(presets.get(which));
+            }
+        });
+
+        // create and show the alert dialog
+        //AlertDialog dialog =  builder.create();
+        builder.show();
+    }
+
     //Animate background
     private void animateBackground(){
         AnimationDrawable animationDrawable = (AnimationDrawable) findViewById(R.id.beat_pad_layout).getBackground();
@@ -260,16 +306,50 @@ public class CreationView extends AppCompatActivity {
 
     //Set up Loop pad and Instrument Pad with new preset
     private void setUpPreset(String presetName){
+        //Clear loading counters
+        loadedCount = 0;
+        maxCount = 0;
+        startLoading();
+
         //Read file
         presetManager.readNewPreset(presetName);
+        audioEngine.resetAudioEngine();
+        bindLoadingIcon();
 
         //Get tiles
         loopPad.tiles = presetManager.getLoopPadTiles();
         instrumentPad.tiles = presetManager.getInstrumentPadTiles();
 
+        //Update max count
+        TileList tileList = new TileList();
+        tileList.setTiles(loopPad.tiles);
+        maxCount += tileList.getNumberOfValidTiles();
+        tileList.setTiles(instrumentPad.tiles);
+        maxCount += tileList.getNumberOfValidTiles();
+
+        //Stop loading if there is no files to load
+        if(maxCount == 0) stopLoading();
+
         //Publish changes
         loopPad.publishTileList();
         instrumentPad.publishTileList();
+
+        //Update images
+        if(onLoopPad) displayLoopPad();
+        else displayInstrumentPad();
+    }
+
+    //Bind Loading Icon
+    private void bindLoadingIcon(){
+        //Setup stop loading
+        audioEngine.getSoundPool().setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
+            @Override
+            public void onLoadComplete(SoundPool soundPool, int sampleId, int status) {
+                loadedCount++;
+                if(loadedCount == maxCount) stopLoading();
+                Log.i("loaded count", String.valueOf(loadedCount) + " " + String.valueOf(maxCount));
+            }
+        });
     }
 
 
@@ -319,17 +399,6 @@ public class CreationView extends AppCompatActivity {
         toggleButton.setOnClickListener(toggleViewType);
 
 
-        /*
-        Button button = findViewById(R.id.notePadLauncher);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent myIntent = new Intent(CreationView.this, NotePad.class);
-                startActivity(myIntent);
-            }
-        });*/
-
-
         //Setup Visualization
         AudioBar audioBar = (AudioBar) findViewById(R.id.barVisualizer);
         audioBar.setPlayer(0);
@@ -357,15 +426,6 @@ public class CreationView extends AppCompatActivity {
 
         //Setup audioengine
         audioEngine.setupAudioEngine(getApplicationContext());
-
-        //Setup stop loading
-        audioEngine.getSoundPool().setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
-            @Override
-            public void onLoadComplete(SoundPool soundPool, int sampleId, int status) {
-                stopLoading();
-            }
-        });
-
 
         //Load Default Preset
         setUpPreset("presetprototype");
@@ -397,7 +457,7 @@ public class CreationView extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.change_presets) {
-
+            displayPresetSelector();
         }
         else if (id == R.id.end_session) {
 

@@ -2,8 +2,10 @@ package ca.uwaterloo.cs446.teamdroids.technosync.audioengine;
 
 import android.content.Context;
 import android.media.SoundPool;
+import android.widget.Toast;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -14,10 +16,38 @@ public class FileManager {
     private Map<Integer, Integer> loopableFiles;
     private Map<Integer, Integer> regularFiles;
 
+    //Unload a maps worth of sounds
+    private void unloadSoundMap(Map<Integer, Integer> soundMap, SoundPool soundPool){
+        Iterator it = soundMap.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry)it.next();
+
+            //Unload value
+            Integer value = (Integer) pair.getValue();
+            if(value != null) soundPool.unload(value.intValue());
+
+
+            it.remove(); // avoids a ConcurrentModificationException
+        }
+    }
+
+    //Unload all sounds
+    public void unloadAllSoundIds(boolean loopable){
+        if(loopable) {
+            loopableFiles.clear();
+        }
+        else {
+            regularFiles.clear();
+        }
+    }
+
+
     //Load all files associated with tiles
     public void loadFilesFromTiles(List<Tile> tiles, SoundPool soundPool, Context applicationContext){
         for(int i = 0; i < tiles.size(); i++){
             Tile currentTile = tiles.get(i);
+
+            if(currentTile.getDisabled()) continue;
 
             //Load file
             Integer soundId = soundPool.load(applicationContext, currentTile.getFileId(), 1);

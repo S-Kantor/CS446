@@ -13,7 +13,7 @@ public class PresetManager {
 
     Preset currentPreset;
     Context context;
-
+    String presetName = "No Preset Selected";
 
     //Get list of presets
     public List<String> getListOfPresets(){
@@ -33,6 +33,7 @@ public class PresetManager {
 
     //Read new preset
     public void readNewPreset(String fileName){
+        presetName = fileName;
         currentPreset.readPresetFile(fileName);
     }
 
@@ -43,6 +44,7 @@ public class PresetManager {
     public List<Tile> getInstrumentPadTiles(){
         return  currentPreset.getInstrumentPadTiles();
     }
+    public String getPresetName(){return  presetName;}
 
     //Initialize
     public PresetManager(Context context){
