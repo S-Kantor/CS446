@@ -41,7 +41,7 @@ def is_valid_room_id(room_id):
     # new_user = User
     # rooms[uuid.UUID(room_id)].join(new_user)
     app.logger.debug('validating room: %s', room_id)
-    return uuid.UUID(room_id) in rooms
+    return 'valid' if uuid.UUID(room_id) in rooms else 'room not found'
 
 
 # --------------------------------------------------------
