@@ -46,6 +46,8 @@ public class CreationView extends AppCompatActivity {
 
     private static final String MISSING_MESSAGE = "Button Not Assigned! (PROTOTYPE ONLY)";
     private static final String IS_PLAYING_AUDIO = "Please Stop Playing Loops Before Executing This Action";
+    private static final String IN_PRACTICE_MODE = "You Can Not Record In Practice Mode";
+    private static final String IS_RECORDING = "Can Not Execute Action While Recording";
 
     private Toolbar toolbar;
 
@@ -63,6 +65,11 @@ public class CreationView extends AppCompatActivity {
     //Loading counters
     int loadedCount = 0;
     int maxCount = 0;
+
+    //Group id
+    String groupId;
+
+
 
     //Get id string of a view
     public static String getId(View view) {
@@ -95,6 +102,13 @@ public class CreationView extends AppCompatActivity {
     //Define action for when toggle switch is clicked
     private View.OnClickListener toggleRecord = new View.OnClickListener() {
         public void onClick(View v) {
+
+            //Check if click is valid
+            if(groupId == null){
+                Toast.makeText(getApplicationContext(), IN_PRACTICE_MODE, Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             //Get image from view
             ImageView imageView = (ImageView) v;
 
@@ -371,6 +385,14 @@ public class CreationView extends AppCompatActivity {
         findViewById(R.id.pBar).setVisibility(View.INVISIBLE);
     }
 
+
+    private void getGroupId(){
+        Bundle creationBundle = getIntent().getExtras();
+        if(creationBundle != null){
+            groupId = creationBundle.getString("group-id");
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -379,6 +401,9 @@ public class CreationView extends AppCompatActivity {
         //Setup Loading
         startLoading();
 
+
+        //Get group id
+        getGroupId();
 
         // Set up the toolbar
         toolbar = findViewById(R.id.tool_bar);
@@ -404,14 +429,14 @@ public class CreationView extends AppCompatActivity {
         audioBar.setPlayer(0);
 
         //Setup WebApi
-        webApi = WebApi.getInstance();
+        if(groupId != null) webApi = WebApi.getInstance();
 
         //Setup Preset Manager
         presetManager = new PresetManager(getApplicationContext());
 
         //Setup eventbus
         audioEngine = new AudioEngine();
-        recordingEngine = new RecordingEngine(webApi);
+        recordingEngine = new RecordingEngine(webApi, groupId);
         instrumentPad = new InstrumentPad();
         loopPad = new LoopPad();
         eventBus = new EventBus();
@@ -460,7 +485,16 @@ public class CreationView extends AppCompatActivity {
             displayPresetSelector();
         }
         else if (id == R.id.end_session) {
-
+            //Check playback status
+            if(audioEngine.isPlayingAudio()){
+                Toast.makeText(getApplicationContext(), IS_PLAYING_AUDIO, Toast.LENGTH_SHORT).show();
+            }
+            else if(recordingEngine.isRecording()){
+                Toast.makeText(getApplicationContext(), IS_RECORDING, Toast.LENGTH_SHORT).show();
+            }
+            else {
+                CreationView.super.onBackPressed();
+            }
         }
 
         return super.onOptionsItemSelected(item);

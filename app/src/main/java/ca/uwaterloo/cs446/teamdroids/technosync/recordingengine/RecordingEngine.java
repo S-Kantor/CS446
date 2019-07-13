@@ -30,6 +30,7 @@ public class RecordingEngine extends Subscriber {
     RecordingList recordingList;
     WebApi webApi;
     boolean recording = false;
+    String groupId = "";
 
     //Record changes to instrument pad
     public void instrumentPadUpdate(Tile tile){
@@ -63,7 +64,7 @@ public class RecordingEngine extends Subscriber {
     //Send local recording to server
     public void sendRecording(){
         //Upload
-        Call<RecordingList> call = webApi.getTechnoSynchService().publishRecording(5);
+        Call<RecordingList> call = webApi.getTechnoSynchService().publishRecording(groupId);
         call.enqueue(new Callback<RecordingList>() {
             @Override
             public void onResponse(Call<RecordingList> call, Response<RecordingList> response) {
@@ -142,10 +143,11 @@ public class RecordingEngine extends Subscriber {
 
 
     //Initialize
-    public RecordingEngine(WebApi webApi){
+    public RecordingEngine(WebApi webApi, String groupId){
         this.currentState = new CurrentState();
         this.recordingList = new RecordingList();
         this.webApi = webApi;
+        this.groupId = groupId;
     }
 
 

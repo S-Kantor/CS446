@@ -6,11 +6,18 @@ import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.PopupWindow;
+
+import ca.uwaterloo.cs446.teamdroids.technosync.api.WebApi;
+import ca.uwaterloo.cs446.teamdroids.technosync.recordingengine.RecordingList;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainMenu extends AppCompatActivity {
 
@@ -20,7 +27,6 @@ public class MainMenu extends AppCompatActivity {
     public Button recordCustomBeatButton;
     public Button changePresetsButton;
     public Button viewRecordingsButton;
-
     public Button startGroupSession;
 
     //Animate background
@@ -59,6 +65,50 @@ public class MainMenu extends AppCompatActivity {
 
         //Animate Background
         animateBackground();
+
+        //Check server
+        checkServerConnection();
+    }
+
+    //Disabled server backed buttons
+    private void disabledServerButtons(){
+        //Disable
+        findViewById(R.id.connection_error).setVisibility(View.VISIBLE);
+        createGroupSessionButton.setEnabled(false);
+        joinGroupSessionButton.setEnabled(false);
+        recordCustomBeatButton.setEnabled(false);
+        viewRecordingsButton.setEnabled(false);
+
+        //Set transparency
+        createGroupSessionButton.setAlpha(0.5f);
+        joinGroupSessionButton.setAlpha(0.5f);
+        recordCustomBeatButton.setAlpha(0.5f);
+        viewRecordingsButton.setAlpha(0.5f);
+    }
+
+    //Check if server is up
+    private void checkServerConnection(){
+        try{
+            //Test Upload
+            WebApi webApi = WebApi.getInstance();
+            Call<RecordingList> call = webApi.getTechnoSynchService().publishRecording("5");
+            call.enqueue(new Callback<RecordingList>() {
+                @Override
+                public void onResponse(Call<RecordingList> call, Response<RecordingList> response) {
+                    Log.i("TechnoSync", "Server check succeeded");
+                }
+
+                @Override
+                public void onFailure(Call<RecordingList> call, Throwable t) {
+                    Log.i("TechnoSync", "Server check failed");
+                    disabledServerButtons();
+                }
+            });
+        }
+        catch (Exception ex){
+            Log.i("Server Error" , "Can not connect! Restart App!");
+            disabledServerButtons();
+        }
     }
 
     private void setupCreateGroupSessionButton() {

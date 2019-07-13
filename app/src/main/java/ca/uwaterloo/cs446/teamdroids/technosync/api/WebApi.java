@@ -10,7 +10,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class WebApi {
 
     private static WebApi instance = null;
-    private static final String BASE_URL = "ADD_BASE_URL_HERE.com";
+    private static final String BASE_URL = "http://thiserverdoesnotexist";
 
     private TechnoSynchService technoSynchService;
 
@@ -34,6 +34,7 @@ public class WebApi {
 
         this.technoSynchService = retrofit.create(TechnoSynchService.class);
     }
+
 
     public TechnoSynchService getTechnoSynchService() {
         return this.technoSynchService;

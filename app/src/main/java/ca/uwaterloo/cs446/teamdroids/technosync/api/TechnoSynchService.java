@@ -8,7 +8,7 @@ import retrofit2.http.Query;
 public interface TechnoSynchService {
 
     @GET("publishRecording")
-    Call<RecordingList> publishRecording(@Query("roomId") int roomId);
+    Call<RecordingList> publishRecording(@Query("roomId") String roomId);
 
     @GET("createRoom")
     Call<RoomResponse> createRoom(@Query("roomId") int roomId);
