@@ -12,22 +12,24 @@
         android:layout_marginTop="20dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:text="Share this code with your friends:"
+        android:text="Enter the code to join a group:"
         android:textColor="@android:color/white"
         android:textSize="18sp" />
 
-    <TextView
-        android:id="@+id/joinGroupCode"
+    <EditText
+        android:id="@+id/groupCodeEditText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerInParent="true"
-        android:text="GROUP CODE"
         android:textColor="@android:color/white"
-        android:textSize="20sp" />
+        android:textSize="18sp"
+        android:inputType="text"
+        android:maxLines="1"
+        android:hint="ENTER GROUP CODE"/>
 
     <Button
-        android:id="@+id/startGroupSession"
+        android:id="@+id/joinGroupSessionButton"
         style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="150dp"
         android:layout_height="57dp"
@@ -35,7 +37,7 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:background="@drawable/button_rounded"
-        android:text="Start Session"
+        android:text="Join Session"
         android:textColor="@android:color/black" />
 
 </RelativeLayout>
