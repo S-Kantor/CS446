@@ -44,35 +44,39 @@ import ca.uwaterloo.cs446.teamdroids.technosync.visualization.AudioBar;
 
 public class CreationView extends AppCompatActivity {
 
+    //Toast Messages
     private static final String MISSING_MESSAGE = "Button Not Assigned! (PROTOTYPE ONLY)";
     private static final String IS_PLAYING_AUDIO = "Please Stop Playing Loops Before Executing This Action";
     private static final String IN_PRACTICE_MODE = "You Can Not Record In Practice Mode";
     private static final String IS_RECORDING = "Can Not Execute Action While Recording";
 
+    //Beat Pad
+    private LoopPad loopPad;
+    private InstrumentPad instrumentPad;
+
+    //Audio objects
+    private AudioEngine audioEngine;
+    private RecordingEngine recordingEngine;
+    private PresetManager presetManager;
+
+    //Management Objects
+    private EventBus eventBus;
+    private WebApi webApi;
     private Toolbar toolbar;
 
-    LoopPad loopPad;
-    InstrumentPad instrumentPad;
-    AudioEngine audioEngine;
-    RecordingEngine recordingEngine;
-    EventBus eventBus;
-    WebApi webApi;
-    PresetManager presetManager;
-
+    //State objects
     boolean onLoopPad = true;
     boolean firstLoad = true;
 
-    //Loading counters
+    //Loading counters (Keep track of when to stop displaying loading icon)
     int loadedCount = 0;
     int maxCount = 0;
 
     //Group id
     String groupId;
 
-
-
     //Get id string of a view
-    public static String getId(View view) {
+    private static String getId(View view) {
         if (view.getId() == View.NO_ID) return "no-id";
         else return view.getResources().getResourceName(view.getId());
     }
@@ -361,9 +365,41 @@ public class CreationView extends AppCompatActivity {
             public void onLoadComplete(SoundPool soundPool, int sampleId, int status) {
                 loadedCount++;
                 if(loadedCount == maxCount) stopLoading();
-                Log.i("loaded count", String.valueOf(loadedCount) + " " + String.valueOf(maxCount));
+                Log.i("SoundPool Loaded ", String.valueOf(loadedCount) + " out of " + String.valueOf(maxCount));
             }
         });
+    }
+
+    //Set up click animations
+    private void setupBeatPadClickAnimations(){
+        //Setup on click animations for all image views
+        for(int i = 1; i <=25; i++){
+            String buttonId = "loop" + i;
+            int resId = getResources().getIdentifier(buttonId, "id", getPackageName());
+            ImageView loopButtonImage = (ImageView) findViewById(resId);
+            loopButtonImage.setOnClickListener(loopButtonClick);
+        }
+    }
+
+    //Setup toggle buttons
+    private void setupToggleButtons(){
+        //Setup on click for toggle button
+        int resId = getResources().getIdentifier("togglePad", "id", getPackageName());
+        ImageView toggleButton = (ImageView) findViewById(resId);
+        toggleButton.setBackgroundResource(R.drawable.note_button);
+        toggleButton.setOnClickListener(toggleViewType);
+
+        //Setup recording button
+        ImageView recordingButton = (ImageView) findViewById(R.id.recordPad);
+        recordingButton.setOnClickListener(toggleRecord);
+        recordingButton.setBackgroundResource(R.drawable.record_button);
+    }
+
+
+    //Setup visualization
+    private void setupVisualization(){
+        AudioBar audioBar = (AudioBar) findViewById(R.id.barVisualizer);
+        audioBar.setPlayer(0);
     }
 
 
@@ -409,24 +445,11 @@ public class CreationView extends AppCompatActivity {
         toolbar = findViewById(R.id.tool_bar);
         setSupportActionBar(toolbar);
 
-        //Setup on click animations for all image views
-        for(int i = 1; i <=25; i++){
-            String buttonId = "loop" + i;
-            int resId = getResources().getIdentifier(buttonId, "id", getPackageName());
-            ImageView loopButtonImage = (ImageView) findViewById(resId);
-            loopButtonImage.setOnClickListener(loopButtonClick);
-        }
-
-        //Setup on click for toggle button
-        int resId = getResources().getIdentifier("togglePad", "id", getPackageName());
-        ImageView toggleButton = (ImageView) findViewById(resId);
-        toggleButton.setBackgroundResource(R.drawable.note_button);
-        toggleButton.setOnClickListener(toggleViewType);
-
+        //Setup click animations
+        setupBeatPadClickAnimations();
 
         //Setup Visualization
-        AudioBar audioBar = (AudioBar) findViewById(R.id.barVisualizer);
-        audioBar.setPlayer(0);
+        setupVisualization();
 
         //Setup WebApi
         if(groupId != null) webApi = WebApi.getInstance();
@@ -455,11 +478,8 @@ public class CreationView extends AppCompatActivity {
         //Load Default Preset
         setUpPreset("presetprototype");
 
-        //Setup recording button
-        ImageView recordingButton = (ImageView) findViewById(R.id.recordPad);
-        recordingButton.setOnClickListener(toggleRecord);
-        recordingButton.setBackgroundResource(R.drawable.record_button);
-
+        //Setup toggle buttons
+        setupToggleButtons();
 
         //Display Loop View
         displayLoopPad();
