@@ -37,6 +37,7 @@ captures/
 # Python venv
 venv/*
 .venv/*
+**/venv/*
 
 # IntelliJ
 *.iml
