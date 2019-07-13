@@ -129,6 +129,7 @@ public class MainMenu extends AppCompatActivity {
         });
     }
 
+
     private void setupCustomBeatButton() {
         //Setup Link to Create
         recordCustomBeatButton.setOnClickListener(new View.OnClickListener() {

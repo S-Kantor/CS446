@@ -1,6 +1,7 @@
 package ca.uwaterloo.cs446.teamdroids.technosync.recordingengine;
 
 import android.util.Base64;
+import android.util.Log;
 
 import com.google.gson.Gson;
 
@@ -11,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ca.uwaterloo.cs446.teamdroids.technosync.api.ApiPath;
+import ca.uwaterloo.cs446.teamdroids.technosync.api.RoomResponse;
 import ca.uwaterloo.cs446.teamdroids.technosync.api.WebApi;
 import ca.uwaterloo.cs446.teamdroids.technosync.common.StateArray;
 import ca.uwaterloo.cs446.teamdroids.technosync.common.Tile;
@@ -18,6 +20,10 @@ import ca.uwaterloo.cs446.teamdroids.technosync.common.TileList;
 import ca.uwaterloo.cs446.teamdroids.technosync.eventbus.EventPackage;
 import ca.uwaterloo.cs446.teamdroids.technosync.eventbus.EventType;
 import ca.uwaterloo.cs446.teamdroids.technosync.eventbus.Subscriber;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class RecordingEngine extends Subscriber {
 
     CurrentState currentState;
@@ -56,12 +62,23 @@ public class RecordingEngine extends Subscriber {
 
     //Send local recording to server
     public void sendRecording(){
-        //Convert recording list to JSON
-        Gson gson = new Gson();
-        String json = gson.toJson(recordingList);
-
         //Upload
-        webApi.post(ApiPath.PUBLISH_RECORDING, json);
+        Call<RecordingList> call = webApi.getTechnoSynchService().publishRecording(5);
+        call.enqueue(new Callback<RecordingList>() {
+            @Override
+            public void onResponse(Call<RecordingList> call, Response<RecordingList> response) {
+                if (response.isSuccessful()) {
+                    Log.i("TechnoSynch", "Call succeeded");
+                } else {
+                    Log.i("TechnoSynch", "Got an error response, maybe like a 403");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<RecordingList> call, Throwable t) {
+                Log.i("TechnoSynch", "Actual http call failed (no internet, wrong url, etc.");
+            }
+        });
     }
 
     //Receive event from event bus
