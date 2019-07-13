@@ -9,8 +9,11 @@ import android.widget.Button;
 
 public class MainMenu extends AppCompatActivity {
 
+    public Button startGroupSessionButton;
     public Button practiceButton;
-
+    public Button recordCustomBeatButton;
+    public Button changePresetsButton;
+    public Button viewRecordingsButton;
 
     //Animate background
     private void animateBackground(){
@@ -19,7 +22,6 @@ public class MainMenu extends AppCompatActivity {
         animationDrawable.setExitFadeDuration(5000);
         animationDrawable.start();
     }
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,8 +36,26 @@ public class MainMenu extends AppCompatActivity {
         setContentView(R.layout.activity_main_menu);
 
         //Get Buttons
+        startGroupSessionButton = (Button) findViewById(R.id.createGroupButton);
+        setupGroupSessionButton();
         practiceButton = (Button) findViewById(R.id.practiceButton);
+        setupPracticeButton();
+        recordCustomBeatButton = (Button) findViewById(R.id.recordAudioButton2);
+        setupCustomBeatButton();
+        changePresetsButton = (Button) findViewById(R.id.createPreset2) ;
+        setupChangePresetsButton();
+        viewRecordingsButton = (Button) findViewById(R.id.audioArchive);
+        setupViewRecordingButton();
 
+        //Animate Background
+        animateBackground();
+    }
+
+    private void setupGroupSessionButton() {
+        // TODO: Implement
+    }
+
+    private void setupPracticeButton() {
         //Setup Link to Create
         practiceButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -47,12 +67,12 @@ public class MainMenu extends AppCompatActivity {
                 startActivity(drumPadIntent);
             }
         });
+    }
 
-        //Get Buttons
-        Button recordButton = (Button) findViewById(R.id.recordAudioButton2);
 
+    private void setupCustomBeatButton() {
         //Setup Link to Create
-        recordButton.setOnClickListener(new View.OnClickListener() {
+        recordCustomBeatButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //Open Music  Creation Window
@@ -62,9 +82,13 @@ public class MainMenu extends AppCompatActivity {
                 startActivity(recordCustomAudio);
             }
         });
+    }
 
-        //Animate Background
-        animateBackground();
+    private void setupChangePresetsButton() {
+        // TODO: Implement it
+    }
 
+    private void setupViewRecordingButton() {
+        // TODO: Implement it #2
     }
 }
