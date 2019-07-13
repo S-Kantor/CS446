@@ -15,54 +15,35 @@
         android:layout_height="91dp"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="24dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:layout_marginBottom="8dp"
         android:text="TechnoSync"
         android:textColor="@android:color/background_light"
         android:textSize="58sp"
         android:textStyle="bold|italic"
-        app:layout_constraintBottom_toTopOf="@+id/button-layout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.65" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/button-layout"
-        android:layout_width="252dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="32dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginBottom="59dp"
         android:background="?android:selectableItemBackground"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.761">
+        app:layout_constraintVertical_bias="0.911">
 
-
-        <Button
-            android:id="@+id/practiceButton"
-            style="@style/Widget.AppCompat.Button.Colored"
-            android:layout_width="216dp"
-            android:layout_height="50dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-            android:background="@drawable/button_rounded"
-            android:text="Practice SOLO"
-            android:textColor="@android:color/black"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/createGroupButton" />
 
         <Button
             android:id="@+id/createGroupButton"
@@ -75,28 +56,62 @@
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
             android:background="@drawable/button_rounded"
-            android:text="START GROUP SESSION"
+            android:text="CREATE GROUP SESSION"
             android:textColor="@android:color/black"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <Button
-            android:id="@+id/audioArchive"
+            android:id="@+id/joinGroupButton"
             style="@style/Widget.AppCompat.Button.Colored"
             android:layout_width="216dp"
-            android:layout_height="53dp"
+            android:layout_height="57dp"
             android:layout_marginStart="8dp"
             android:layout_marginLeft="8dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
             android:background="@drawable/button_rounded"
-            android:text="Recordings"
+            android:text="JOIN GROUP SESSION"
             android:textColor="@android:color/black"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/createPreset2" />
+            app:layout_constraintTop_toBottomOf="@+id/createGroupButton" />
+
+        <Button
+            android:id="@+id/practiceButton"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="216dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:background="@drawable/button_rounded"
+            android:text="Practice Solo"
+            android:textColor="@android:color/black"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/joinGroupButton" />
+
+        <Button
+            android:id="@+id/recordAudioButton2"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="216dp"
+            android:layout_height="53dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="42dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:background="@drawable/button_rounded"
+            android:text="Record Custom Beats"
+            android:textColor="@android:color/black"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/practiceButton" />
 
         <Button
             android:id="@+id/createPreset2"
@@ -116,21 +131,22 @@
             app:layout_constraintTop_toBottomOf="@+id/recordAudioButton2" />
 
         <Button
-            android:id="@+id/recordAudioButton2"
+            android:id="@+id/audioArchive"
             style="@style/Widget.AppCompat.Button.Colored"
             android:layout_width="216dp"
             android:layout_height="53dp"
             android:layout_marginStart="8dp"
             android:layout_marginLeft="8dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="42dp"
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
             android:background="@drawable/button_rounded"
-            android:text="Record Custom Beats"
+            android:text="Recordings"
             android:textColor="@android:color/black"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/practiceButton" />
+            app:layout_constraintTop_toBottomOf="@+id/createPreset2" />
+
     </android.support.constraint.ConstraintLayout>
 
     <TextView
