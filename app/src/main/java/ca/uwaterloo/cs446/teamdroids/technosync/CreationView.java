@@ -404,7 +404,7 @@ public class CreationView extends AppCompatActivity {
         audioBar.setPlayer(0);
 
         //Setup WebApi
-        webApi = new WebApi();
+        webApi = WebApi.getInstance();
 
         //Setup Preset Manager
         presetManager = new PresetManager(getApplicationContext());
