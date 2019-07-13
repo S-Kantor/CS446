@@ -93,35 +93,34 @@ public class MainMenu extends AppCompatActivity {
     }
 
     private void setupJoinGroupSessionButton() {
-        // TODO: Implement
-//        joinGroupSessionButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-//                View popupView = inflater.inflate(R.layout.join_group_popup_view, null);
-//
-//                // create the popup window
-//                int width = 800;
-//                int height = 700;
-//                boolean focusable = true; // lets taps outside the popup also dismiss it
-//                final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
-//
-//                // show the popup window
-//                // which view you pass in doesn't matter, it is only used for the window tolken
-//                popupWindow.showAtLocation(v, Gravity.CENTER, 0, 0);
-//
-//                //startGroupSession = (Button) popupView.findViewById(R.id.joinGroupSessionButton);
-//
-//                // Closes the popup window when touch outside.
-//                popupWindow.setOutsideTouchable(true);
-//                popupWindow.setFocusable(true);
-//                // Removes default background.
-//                popupWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-//
-//                // Setup button to start the recording session
-//               // setupStartGroupSessionButton(popupWindow);
-//            }
-//        });
+        joinGroupSessionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+                View popupView = inflater.inflate(R.layout.join_group_popup_view, null);
+
+                // create the popup window
+                int width = 800;
+                int height = 700;
+                boolean focusable = true; // lets taps outside the popup also dismiss it
+                final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
+
+                // show the popup window
+                // which view you pass in doesn't matter, it is only used for the window tolken
+                popupWindow.showAtLocation(v, Gravity.CENTER, 0, 0);
+
+                //startGroupSession = (Button) popupView.findViewById(R.id.joinGroupSessionButton);
+
+                // Closes the popup window when touch outside.
+                popupWindow.setOutsideTouchable(true);
+                popupWindow.setFocusable(true);
+                // Removes default background.
+                popupWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+                // Setup button to start the recording session
+                setupStartGroupSessionButton(popupWindow);
+            }
+        });
     }
 
     private void setupStartGroupSessionButton(PopupWindow popupWindow) {
