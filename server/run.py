@@ -37,7 +37,7 @@ def create_room():
 
 
 # Allows a new user to validate their room ID
-@app.route("/<string:room_id>/is-valid-room-id-", methods=['POST'])
+@app.route("/<string:room_id>/is-valid-room-id", methods=['POST'])
 def is_valid_room_id(room_id):
     # new_user = User
     # rooms[uuid.UUID(room_id)].join(new_user)
