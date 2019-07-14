@@ -42,7 +42,7 @@ def is_valid_room_id(room_id):
     # new_user = User
     # rooms[uuid.UUID(room_id)].join(new_user)
     app.logger.debug('validating room: %s', room_id)
-    return 'valid' if room_id in rooms else 'room not found'
+    return str(room_id in rooms)
 
 
 # --------------------------------------------------------
@@ -85,7 +85,7 @@ def stop_recording(room_id):
                                      json['offsets'], )
     complete = rooms[room_id].stop_recording(new_timing)
     app.logger.debug('last user: %b', complete)
-    return complete
+    return str(complete)
 
 
 # Upload a sound file to current recording session
@@ -96,7 +96,7 @@ def upload_sound(room_id):
     filename = request.files.keys[0]
     app.logger.debug('new file %s uploaded to room %s', filename, room_id)
     file = request.files[filename]
-    return rooms[room_id].add_new_sound(filename, file)
+    return str(rooms[room_id].add_new_sound(filename, file))
 
 
 # --------------------------------------------------------
@@ -109,7 +109,7 @@ def upload_sound(room_id):
 @app.route("/<string:room_id>/is-recording-complete")
 def is_recording_complete(room_id):
     app.logger.debug('checking whether recording is complete for room %s', room_id)
-    return not rooms[room_id].is_recording()
+    return str(not rooms[room_id].is_recording())
 
 
 # Returns the generated composition as an mp3 file
