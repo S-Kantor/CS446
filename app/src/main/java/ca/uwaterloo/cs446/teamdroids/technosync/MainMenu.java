@@ -12,9 +12,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.PopupWindow;
+import android.widget.TextView;
 
 import ca.uwaterloo.cs446.teamdroids.technosync.api.WebApi;
-import ca.uwaterloo.cs446.teamdroids.technosync.recordingengine.RecordingList;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -28,6 +28,9 @@ public class MainMenu extends AppCompatActivity {
     public Button changePresetsButton;
     public Button viewRecordingsButton;
     public Button startGroupSession;
+    public TextView connectionErrorText;
+
+    public WebApi webApi;
 
     //Animate background
     private void animateBackground(){
@@ -62,6 +65,11 @@ public class MainMenu extends AppCompatActivity {
         setupChangePresetsButton();
         viewRecordingsButton = (Button) findViewById(R.id.audioArchive);
         setupViewRecordingButton();
+        connectionErrorText = (TextView) findViewById(R.id.connection_error);
+        connectionErrorText.setVisibility(View.GONE);
+
+        // Initialize WebAPI
+        webApi = WebApi.getInstance();
 
         //Animate Background
         animateBackground();
@@ -79,6 +87,8 @@ public class MainMenu extends AppCompatActivity {
         recordCustomBeatButton.setEnabled(false);
         viewRecordingsButton.setEnabled(false);
 
+        connectionErrorText.setVisibility(View.VISIBLE);
+
         //Set transparency
         createGroupSessionButton.setAlpha(0.5f);
         joinGroupSessionButton.setAlpha(0.5f);
@@ -90,16 +100,15 @@ public class MainMenu extends AppCompatActivity {
     private void checkServerConnection(){
         try{
             //Test Upload
-            WebApi webApi = WebApi.getInstance();
-            Call<RecordingList> call = webApi.getTechnoSynchService().publishRecording("5");
-            call.enqueue(new Callback<RecordingList>() {
+            Call<String> call = webApi.getTechnoSynchService().createRoom();
+            call.enqueue(new Callback<String>() {
                 @Override
-                public void onResponse(Call<RecordingList> call, Response<RecordingList> response) {
+                public void onResponse(Call<String> call, Response<String> response) {
                     Log.i("TechnoSync", "Server check succeeded");
                 }
 
                 @Override
-                public void onFailure(Call<RecordingList> call, Throwable t) {
+                public void onFailure(Call<String> call, Throwable t) {
                     Log.i("TechnoSync", "Server check failed");
                     disabledServerButtons();
                 }
@@ -108,6 +117,44 @@ public class MainMenu extends AppCompatActivity {
         catch (Exception ex){
             Log.i("Server Error" , "Can not connect! Restart App!");
             disabledServerButtons();
+        }
+    }
+
+    private void createRoom(PopupWindow popupWindow) {
+        try {
+            Call<String> call = webApi.getTechnoSynchService().createRoom();
+            call.enqueue(new Callback<String>() {
+                @Override
+                public void onResponse(Call<String> call, Response<String> response) {
+                    Log.i("TechnoSync", "Created new room");
+                    String groupId =  response.body();
+
+                    //Open Music  Creation Window
+                    Intent drumPadIntent = new Intent(getBaseContext(), CreationView.class);
+
+                    // Put groupId as Extra
+                    drumPadIntent.putExtra("group_id", groupId);
+
+                    //Clear activity stack and start new activity
+                    startActivity(drumPadIntent);
+
+                    // Close the current popup
+                    popupWindow.dismiss();
+                }
+
+                @Override
+                public void onFailure(Call<String> call, Throwable t) {
+                    Log.i("TechnoSync", "Failed to create new room");
+
+                    // Close the current popup
+                    popupWindow.dismiss();
+                }
+            });
+        } catch (Exception e) {
+            Log.i("Server Error" , "Can not connect! Restart App!");
+
+            // Close the current popup
+            popupWindow.dismiss();
         }
     }
 
@@ -178,14 +225,8 @@ public class MainMenu extends AppCompatActivity {
         startGroupSession.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Open Music  Creation Window
-                Intent drumPadIntent = new Intent(getBaseContext(), CreationView.class);
-
-                //Clear activity stack and start new activity
-                startActivity(drumPadIntent);
-
-                // Close the current popup
-                popupWindow.dismiss();
+                // Create a Group
+                createRoom(popupWindow);
             }
         });
     }

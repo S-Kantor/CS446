@@ -425,7 +425,7 @@ public class CreationView extends AppCompatActivity {
     private void getGroupId(){
         Bundle creationBundle = getIntent().getExtras();
         if(creationBundle != null){
-            groupId = creationBundle.getString("group-id");
+            groupId = creationBundle.getString("group_id");
         }
     }
 

@@ -3,15 +3,17 @@ package ca.uwaterloo.cs446.teamdroids.technosync.api;
 import ca.uwaterloo.cs446.teamdroids.technosync.recordingengine.RecordingList;
 import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.POST;
 import retrofit2.http.Query;
+import retrofit2.http.Headers;
 
 public interface TechnoSynchService {
 
-    @GET("publishRecording")
+    @GET("")
     Call<RecordingList> publishRecording(@Query("roomId") String roomId);
 
-    @GET("createRoom")
-    Call<RoomResponse> createRoom(@Query("roomId") int roomId);
+    @POST("create-room")
+    Call<String> createRoom();
 
     @GET("joinRoom")
     Call<RoomResponse> joinRoom(@Query("roomId") int roomId);
