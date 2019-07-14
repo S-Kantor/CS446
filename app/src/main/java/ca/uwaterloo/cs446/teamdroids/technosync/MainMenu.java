@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import ca.uwaterloo.cs446.teamdroids.technosync.api.WebApi;
 import retrofit2.Call;
@@ -148,6 +149,9 @@ public class MainMenu extends AppCompatActivity {
                 public void onFailure(Call<String> call, Throwable t) {
                     Log.i("TechnoSync", "Failed to create new room");
 
+                    String message = "Failed to create a group. Please try again!";
+                    Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+
                     // Close the current popup
                     popupWindow.dismiss();
                 }
@@ -189,13 +193,17 @@ public class MainMenu extends AppCompatActivity {
                         popupWindow.dismiss();
                     }
                     else {
-                        // TODO: IMPLEMENT WHEN ROOM ID IS NOT VALID
+                        String message = "Incorrect Group Code. Please try again!";
+                        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
                     }
                 }
 
                 @Override
                 public void onFailure(Call<String> call, Throwable t) {
                     Log.i("TechnoSync", "Failed to join the room");
+
+                    String message = "Failed to join the group. Please try again!";
+                    Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
 
                     // Close the current popup
                     popupWindow.dismiss();
