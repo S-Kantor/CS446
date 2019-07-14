@@ -11,6 +11,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
@@ -29,6 +30,7 @@ public class MainMenu extends AppCompatActivity {
     public Button viewRecordingsButton;
     public Button startGroupSession;
     public TextView connectionErrorText;
+    public EditText groupCodeEditText;
 
     public WebApi webApi;
 
@@ -158,6 +160,55 @@ public class MainMenu extends AppCompatActivity {
         }
     }
 
+    private void joinRoom(PopupWindow popupWindow) {
+        String groupId = groupCodeEditText.getText().toString();
+        if (groupId.length() == 0) {
+            return;
+        }
+
+        try {
+
+            Call<String> call = webApi.getTechnoSynchService().joinRoom(groupId);
+            call.enqueue(new Callback<String>() {
+                @Override
+                public void onResponse(Call<String> call, Response<String> response) {
+                    Log.i("TechnoSync", "Room available to join room");
+                    String is_valid =  response.body();
+
+                    if (is_valid.equals("True")) {
+                        //Open Music  Creation Window
+                        Intent drumPadIntent = new Intent(getBaseContext(), CreationView.class);
+
+                        // Put groupId as Extra
+                        drumPadIntent.putExtra("group_id", groupId);
+
+                        //Clear activity stack and start new activity
+                        startActivity(drumPadIntent);
+
+                        // Close the current popup
+                        popupWindow.dismiss();
+                    }
+                    else {
+                        // TODO: IMPLEMENT WHEN ROOM ID IS NOT VALID
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<String> call, Throwable t) {
+                    Log.i("TechnoSync", "Failed to join the room");
+
+                    // Close the current popup
+                    popupWindow.dismiss();
+                }
+            });
+        } catch (Exception e) {
+            Log.i("Server Error" , "Can not connect! Restart App!");
+
+            // Close the current popup
+            popupWindow.dismiss();
+        }
+    }
+
     private void setupCreateGroupSessionButton() {
         createGroupSessionButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -184,7 +235,7 @@ public class MainMenu extends AppCompatActivity {
                 popupWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
                 // Setup button to start the recording session
-                setupStartGroupSessionButton(popupWindow);
+                setupStartGroupSessionButton(Boolean.TRUE, popupWindow);
             }
         });
     }
@@ -206,7 +257,8 @@ public class MainMenu extends AppCompatActivity {
                 // which view you pass in doesn't matter, it is only used for the window tolken
                 popupWindow.showAtLocation(v, Gravity.CENTER, 0, 0);
 
-                //startGroupSession = (Button) popupView.findViewById(R.id.joinGroupSessionButton);
+                startGroupSession = (Button) popupView.findViewById(R.id.joinGroupSessionButton);
+                groupCodeEditText = (EditText) popupView.findViewById(R.id.groupCodeEditText);
 
                 // Closes the popup window when touch outside.
                 popupWindow.setOutsideTouchable(true);
@@ -215,18 +267,23 @@ public class MainMenu extends AppCompatActivity {
                 popupWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
                 // Setup button to start the recording session
-                setupStartGroupSessionButton(popupWindow);
+                setupStartGroupSessionButton(Boolean.FALSE, popupWindow);
             }
         });
     }
 
-    private void setupStartGroupSessionButton(PopupWindow popupWindow) {
+    private void setupStartGroupSessionButton(Boolean isCreating, PopupWindow popupWindow) {
         // TODO: Implement
         startGroupSession.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Create a Group
-                createRoom(popupWindow);
+                if (isCreating == Boolean.TRUE) {
+                    // Create a Group
+                    createRoom(popupWindow);
+                } else {
+                    // Join a group
+                    joinRoom(popupWindow);
+                }
             }
         });
     }
