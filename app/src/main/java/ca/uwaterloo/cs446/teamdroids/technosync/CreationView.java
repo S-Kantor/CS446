@@ -5,8 +5,10 @@ import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.AnimationDrawable;
 import android.media.SoundPool;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -492,7 +494,7 @@ public class CreationView extends AppCompatActivity {
     // Add menu items to the toolbar
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.layout.toolbar_menu, menu);
+        getMenuInflater().inflate(R.menu.toolbar_menu, menu);
         return true;
     }
 
@@ -513,10 +515,33 @@ public class CreationView extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), IS_RECORDING, Toast.LENGTH_SHORT).show();
             }
             else {
+                // TODO: SEND RECORDING TO SERVER: @HARSH, @SAM
+
+                // Save the group_id on disk to fetch the finished song from the server later
+
+                endRecording();
+
                 CreationView.super.onBackPressed();
             }
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void endRecording() {
+        // Save the groupId to the list of groups that the user was a part of to persist
+        // Fetch the list of previously saved groupIds
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String finishedSongList = preferences.getString("composedSongGroups", "");
+        if (finishedSongList.equals("")) {
+            finishedSongList = finishedSongList + groupId;
+        } else {
+            finishedSongList = finishedSongList + "," + groupId;
+        }
+
+        // Save back the updated groupIds
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("composedSongGroups", finishedSongList);
+        editor.apply();
     }
 }
