@@ -1,9 +1,10 @@
-from flask import Flask, request, send_file
-from room import Room
-from music import FileOffsetRecording
-
+from datetime import datetime
 from typing import Dict
-import uuid
+
+from flask import Flask, request, send_file
+
+from music import BeatTimestamp, FileOffsetRecording
+from room import Room
 
 app = Flask(__name__)
 
@@ -64,11 +65,11 @@ def start_recording(room_id):
 # {
 #   'start_time': "%H:%M:%S.%f" (f is microseconds)
 #   'end_time': "%H:%M:%S.%f"
-#   'offsets' : [
+#   'events' : [
 #       {
 #           filename: string,   -- name of the audio file (uploaded and default)
-#           offset: int,        -- offset in milliseconds
-#           times: int,         -- number of times to repeat the audio file
+#           time: "%H:%M:%S.%f"
+#           loopable: bool
 #       },
 #       ...
 #   ]
@@ -80,9 +81,16 @@ def stop_recording(room_id):
 
     json = request.get_json()
     app.logger.debug(json)
-    new_timing = FileOffsetRecording(json['start_time'],
-                                     json['end_time'],
-                                     json['offsets'], )
+    timestamps = [
+        BeatTimestamp(
+            bool(e['loopable']),
+            datetime.strptime(e['time'], "%H:%M:%S.%f"),
+            e['filename']
+        ) for e in json['events']]
+    new_timing = FileOffsetRecording(
+        datetime.strptime(json['start_time'], "%H:%M:%S.%f"),
+        datetime.strptime(json['end_time'], "%H:%M:%S.%f"),
+        timestamps)
     complete = rooms[room_id].stop_recording(new_timing)
     app.logger.debug('last user: %b', complete)
     return str(complete)

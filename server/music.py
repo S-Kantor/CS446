@@ -1,9 +1,9 @@
-import logging
 import datetime
+import logging
+import os
 
 from pydub import AudioSegment
 from pydub.playback import play
-import os
 
 SOUND_DIR = os.path.join(os.path.dirname(__file__), 'sounds')
 
@@ -49,19 +49,58 @@ class MusicProducer:
         return True
 
 
+class BeatOffset:
+    loopable: bool
+    offset: float
+    filename: str
+
+    def __init__(self, loopable, offset, filename):
+        self.filename = filename
+        self.loopable = loopable
+        self.offset = offset
+
+
+class BeatTimestamp:
+    loopable: bool
+    time: datetime.datetime
+    filename: str
+
+    def __init__(self, loopable, time, filename):
+        self.filename = filename
+        self.loopable = loopable
+        self.time = time
+
+
 class FileOffsetRecording:
     composition: AudioSegment
 
-    def __init__(self, start_time, end_time, offsets):
+    def __init__(self, start_time, end_time, timestamps):
         self.start_time = datetime.datetime.strptime(start_time, "%H:%M:%S.%f")
         self.end_time = datetime.datetime.strptime(end_time, "%H:%M:%S.%f")
 
-        # todo: convert offsets to list(filename, offset, times)
-        self.offsets = offsets
+        self.timestamps =timestamps
+
+    def gen_offsets(self):
+        loopable_start_times = {}
+        result = []
+        for timestamp in self.timestamps:
+            if timestamp.loopable:
+                if timestamp.filename in loopable_start_times:
+                    result.append(BeatOffset(timestamp.loopable,
+                                             loopable_start_times[timestamp.filename] - self.start_time,
+                                             timestamp.filename))
+                    loopable_start_times.pop(timestamp.filename)
+                else:
+                    loopable_start_times[timestamp.filename] = timestamp.time
+            else:
+                result.append(BeatOffset(timestamp.loopable,
+                                         timestamp.time - self.start_time,
+                                         timestamp.filename))
+        return result
 
     def produce(self, new_sounds):
         base_segment = AudioSegment.silent(duration=len(self))
-        for filename, offset, times in self.offsets:
+        for filename, offset, times in self.gen_offsets():
             if filename in new_sounds:
                 sound = new_sounds[filename]
             else:
