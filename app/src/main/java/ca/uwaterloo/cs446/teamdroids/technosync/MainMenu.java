@@ -33,6 +33,7 @@ public class MainMenu extends AppCompatActivity {
     public TextView connectionErrorText;
     public EditText groupCodeEditText;
 
+    public String newGroupId;
     public WebApi webApi;
 
     //Animate background
@@ -107,7 +108,8 @@ public class MainMenu extends AppCompatActivity {
             call.enqueue(new Callback<String>() {
                 @Override
                 public void onResponse(Call<String> call, Response<String> response) {
-                    Log.i("TechnoSync", "Server check succeeded");
+                    newGroupId = response.body();
+                    Log.i("TechnoSync", "Server check succeeded and created new room");
                 }
 
                 @Override
@@ -124,44 +126,17 @@ public class MainMenu extends AppCompatActivity {
     }
 
     private void createRoom(PopupWindow popupWindow) {
-        try {
-            Call<String> call = webApi.getTechnoSynchService().createRoom();
-            call.enqueue(new Callback<String>() {
-                @Override
-                public void onResponse(Call<String> call, Response<String> response) {
-                    Log.i("TechnoSync", "Created new room");
-                    String groupId =  response.body();
+        //Open Music  Creation Window
+        Intent drumPadIntent = new Intent(getBaseContext(), CreationView.class);
 
-                    //Open Music  Creation Window
-                    Intent drumPadIntent = new Intent(getBaseContext(), CreationView.class);
+        // Put groupId as Extra
+        drumPadIntent.putExtra("group_id", newGroupId);
 
-                    // Put groupId as Extra
-                    drumPadIntent.putExtra("group_id", groupId);
+        //Clear activity stack and start new activity
+        startActivity(drumPadIntent);
 
-                    //Clear activity stack and start new activity
-                    startActivity(drumPadIntent);
-
-                    // Close the current popup
-                    popupWindow.dismiss();
-                }
-
-                @Override
-                public void onFailure(Call<String> call, Throwable t) {
-                    Log.i("TechnoSync", "Failed to create new room");
-
-                    String message = "Failed to create a group. Please try again!";
-                    Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
-
-                    // Close the current popup
-                    popupWindow.dismiss();
-                }
-            });
-        } catch (Exception e) {
-            Log.i("Server Error" , "Can not connect! Restart App!");
-
-            // Close the current popup
-            popupWindow.dismiss();
-        }
+        // Close the current popup
+        popupWindow.dismiss();
     }
 
     private void joinRoom(PopupWindow popupWindow) {
@@ -235,6 +210,8 @@ public class MainMenu extends AppCompatActivity {
                 popupWindow.showAtLocation(v, Gravity.CENTER, 0, 0);
 
                 startGroupSession = (Button) popupView.findViewById(R.id.startGroupSession);
+                TextView groupCode = (TextView) popupView.findViewById(R.id.joinGroupCode);
+                groupCode.setText(newGroupId);
 
                 // Closes the popup window when touch outside.
                 popupWindow.setOutsideTouchable(true);
