@@ -2,6 +2,7 @@ package ca.uwaterloo.cs446.teamdroids.technosync.audioengine;
 
 import android.content.Context;
 import android.media.SoundPool;
+import android.util.Log;
 import android.widget.Toast;
 
 import java.util.HashMap;
@@ -49,8 +50,19 @@ public class FileManager {
 
             if(currentTile.getDisabled()) continue;
 
-            //Load file
-            Integer soundId = soundPool.load(applicationContext, currentTile.getFileId(), 1);
+            //Load file from app package
+            Integer soundId;
+            if(currentTile.getFileId() != -1){
+                soundId = soundPool.load(applicationContext, currentTile.getFileId(), 1);
+            }
+            //Load file from internal storage
+            else{
+                String filename = currentTile.getFileString() + ".mp4";
+                String filePath = applicationContext.getFilesDir().getAbsolutePath() + "/" + filename;
+                Log.i("Loading Custom Beat", filePath);
+                soundId = soundPool.load(filePath, 1);
+            }
+
 
             //Update mapping
             if(currentTile.getLoopable()){
