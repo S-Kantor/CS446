@@ -57,11 +57,14 @@ public class Preset {
         int resid = getResId(fileName, R.raw.class);
 
         try {
-            //Determine if file is a packaged file or internal file
+            //Packaged Preset
             if (resid > -1) {
                 return context.getResources().openRawResource(resid);
-            } else {
-                return context.openFileInput(fileName);
+            }
+            //Custom Preset
+            else {
+                String fullFileName = fileName + ".txt";
+                return context.openFileInput(fullFileName);
             }
         }
         catch (Exception ex){
