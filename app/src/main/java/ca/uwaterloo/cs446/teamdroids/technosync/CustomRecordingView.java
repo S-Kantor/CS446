@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -21,6 +22,15 @@ import android.widget.TextView;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+
+import ca.uwaterloo.cs446.teamdroids.technosync.api.WebApi;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class CustomRecordingView extends AppCompatActivity {
 
@@ -120,6 +130,7 @@ public class CustomRecordingView extends AppCompatActivity {
                 setSelectedFileText(-1);
                 updateList();
                 updateNewFileName();
+                sendFileToServer();
             }
         }, 250);
     }
@@ -194,6 +205,57 @@ public class CustomRecordingView extends AppCompatActivity {
         } else {
             newFileName += "/UserBeat_1.mp4";
         }
+    }
+
+    private void sendFileToServer() {
+
+        String lastCreatedFile = getFilePathFromSelectedText();
+        File lastFile = null;
+
+        File[] listOfFiles = getFilesDir().listFiles();
+        for (File file : listOfFiles) {
+            if (file.getAbsolutePath().equalsIgnoreCase(lastCreatedFile)) {
+                lastFile = file;
+            }
+        }
+
+        if (lastFile == null) {
+            Log.e("TechnoSynch", "invalid file");
+            return;
+        }
+
+        // Create RequestBody instance from file
+        RequestBody requestFile =
+                RequestBody.create(
+                        MediaType.parse("*/*"),
+                        lastFile
+                );
+
+        // MultipartBody.Part is used to send also the actual file name
+        MultipartBody.Part body =
+                MultipartBody.Part.createFormData("audio", lastFile.getName(), requestFile);
+
+        // add another part within the multipart request
+        String descriptionString = "Custom Audio From User";
+        RequestBody description =
+                RequestBody.create(
+                        okhttp3.MultipartBody.FORM, descriptionString);
+
+        // finally, execute the request
+        Call<ResponseBody> call = WebApi.getInstance().getTechnoSynchService().uploadCustomAudio(description, body);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call,
+                                   Response<ResponseBody> response) {
+                Log.v("Upload", "success");
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.e("Upload error:", t.getMessage());
+            }
+        });
+
     }
 
     @Override

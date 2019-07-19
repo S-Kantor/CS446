@@ -76,7 +76,7 @@ public class MainMenu extends AppCompatActivity {
         findViewById(R.id.connection_error).setVisibility(View.VISIBLE);
         createGroupSessionButton.setEnabled(false);
         joinGroupSessionButton.setEnabled(false);
-        recordCustomBeatButton.setEnabled(false);
+        recordCustomBeatButton.setEnabled(true);
         viewRecordingsButton.setEnabled(false);
 
         //Set transparency
