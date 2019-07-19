@@ -22,6 +22,7 @@ import android.widget.TextView;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.UUID;
 
 import ca.uwaterloo.cs446.teamdroids.technosync.api.WebApi;
 import okhttp3.MediaType;
@@ -201,14 +202,13 @@ public class CustomRecordingView extends AppCompatActivity {
         }
         newFileName = getFilesDir().getAbsolutePath();
         if (listOfFiles.length > 0) {
-            newFileName += "/UserBeat_" + (countOfUserBeatFiles + 1) + ".mp4";
+            newFileName += "/UserBeat_" + (countOfUserBeatFiles + 1) + "_" + UUID.randomUUID().toString().substring(0,8) + ".mp4";
         } else {
-            newFileName += "/UserBeat_1.mp4";
+            newFileName += "/UserBeat_1_" + UUID.randomUUID().toString().substring(0,8) + ".mp4";
         }
     }
 
     private void sendFileToServer() {
-
         String lastCreatedFile = getFilePathFromSelectedText();
         File lastFile = null;
 
@@ -275,7 +275,9 @@ public class CustomRecordingView extends AppCompatActivity {
         ArrayList<String> fileNames = new ArrayList<>();
         File[] files = getFilesDir().listFiles();
         for (File file : files) {
-            fileNames.add(getFileNameFromPath(file.getAbsolutePath()));
+            if (file.getName().endsWith(".mp4")) {
+                fileNames.add(getFileNameFromPath(file.getAbsolutePath()));
+            }
         }
         myListAdapter = new ListViewAdapter(this, fileNames);
         fileListView.setAdapter(myListAdapter);
