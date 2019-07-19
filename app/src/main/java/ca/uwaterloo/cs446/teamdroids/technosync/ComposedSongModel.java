@@ -19,7 +19,15 @@ public class ComposedSongModel {
         return this.isDownloaded;
     }
 
+    public void setIsDownloaded(boolean isDownloaded) {
+        this.isDownloaded = isDownloaded;
+    }
+
     public boolean isPlaying() {
         return this.isPlaying;
+    }
+
+    public void  setIsPlaying(boolean isPlaying) {
+        this.isPlaying = isPlaying;
     }
 }

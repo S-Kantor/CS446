@@ -19,20 +19,23 @@ import java.util.List;
 
 public class ComposedSongsView extends AppCompatActivity {
 
-    public Button refreshButton;
-    public ListView listOfSongs;
-    public List<String> composedSongsList;
+    private Button refreshButton;
+    private ListView songsListView;
+    private ListViewAdapter listAdapter;
+    private ArrayList<ComposedSongModel> composedSongsList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_composed_songs_view);
 
+        composedSongsList = fetchSavedComposedSongs();
+
         refreshButton = (Button) findViewById(R.id.refreshButton);
         setupRefreshButton();
-        listOfSongs = (ListView) findViewById(R.id.listOfComposedSongs);
-
-        composedSongsList = fetchSavedComposedSongs();
+        songsListView = (ListView) findViewById(R.id.listOfComposedSongs);
+        listAdapter = new ListViewAdapter(this, composedSongsList);
+        songsListView.setAdapter(listAdapter);
     }
 
     private void setupRefreshButton() {
@@ -44,19 +47,62 @@ public class ComposedSongsView extends AppCompatActivity {
         });
     }
 
-    private List<String> fetchSavedComposedSongs() {
+    private ArrayList<ComposedSongModel> fetchSavedComposedSongs() {
         // Fetch the list of group IDs the user has been a part of
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         String finishedSongsString = preferences.getString("composedSongGroups", "");
-        String[] songs = finishedSongsString.split(",");
-        List<String> songsList = new ArrayList<String>();
+        String[] songs = {"room1", "room2", "room3", "room4"}; //finishedSongsString.split(",");
+        ArrayList<ComposedSongModel> songsList = new ArrayList<ComposedSongModel>();
 
         for (int i = songs.length - 1; i >= 0; i--) {
-            songsList.add(songs[i]);
+            String groupId = songs[i];
+            songsList.add(new ComposedSongModel(groupId));
         }
 
         return songsList;
     }
+
+    public Button.OnClickListener onDownloadButtonClickListener = new Button.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            if (view.getId() != R.id.downloadSongButton) {
+                return;
+            }
+
+            ComposedSongModel selectedSong = composedSongsList.get((int)view.getTag());
+
+            // TODO: DOWNLOAD SONG HERE USING THE GROUP ID and set selectedSong property to downloaded
+            if (!selectedSong.isDownloaded()) {
+                view.setAlpha(0.5f);
+                view.setEnabled(false);
+
+                // START DOWNLOAD NOW and enable Play Button once downloaded
+            }
+        }
+    };
+
+    public Button.OnClickListener onPlayButtonClickListener = new Button.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            if (view.getId() != R.id.playSongButton) {
+                return;
+            }
+
+            ComposedSongModel selectedSong = composedSongsList.get((int)view.getTag());
+            Button playButton = (Button) view;
+
+            // TODO: PLAY SONG HERE USING THE GROUP ID and set isPlaying property to true
+            if (selectedSong.isPlaying()) {
+                // Pause here
+                selectedSong.setIsPlaying(false);
+                playButton.setText("PLAY");
+            } else {
+                // Play here
+                selectedSong.setIsPlaying(true);
+                playButton.setText("PAUSE");
+            }
+        }
+    };
 
     private class ListViewAdapter extends BaseAdapter {
         private final Context mContext;
@@ -93,12 +139,27 @@ public class ComposedSongsView extends AppCompatActivity {
             }
 
             TextView songNameTextView = convertView.findViewById(R.id.songName);
-            String text = "Song" + Integer.toString(position) + "1";
+            String text = "Song_" + position;
             songNameTextView.setText(text);
 
             Button downloadButton = convertView.findViewById(R.id.downloadSongButton);
-            if song.isDownloaded() {
+            downloadButton.setTag(position);
+            downloadButton.setOnClickListener(onDownloadButtonClickListener);
 
+            Button playButton = convertView.findViewById(R.id.playSongButton);
+            playButton.setTag(position);
+            playButton.setOnClickListener(onPlayButtonClickListener);
+
+            if (song.isDownloaded()) {
+                downloadButton.setAlpha(0.0f);
+                downloadButton.setEnabled(false);
+                playButton.setAlpha(1.0f);
+                playButton.setEnabled(true);
+            } else {
+                downloadButton.setAlpha(1.0f);
+                downloadButton.setEnabled(true);
+                playButton.setAlpha(0.5f);
+                playButton.setEnabled(false);
             }
 
             return convertView;
