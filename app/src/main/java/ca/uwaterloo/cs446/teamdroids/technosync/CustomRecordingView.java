@@ -181,12 +181,16 @@ public class CustomRecordingView extends AppCompatActivity {
 
     private void updateNewFileName() {
         // Record to the external cache directory for visibility
-        // TODO: If we need to store other types of files, we need to update this to only count
-        // TODO: the number of UserBeat_* files.
         File[] listOfFiles = getFilesDir().listFiles();
+        int countOfUserBeatFiles = 0;
+        for (File file : listOfFiles) {
+            if (file.getName().contains("UserBeat_")) {
+                countOfUserBeatFiles += 1;
+            }
+        }
         newFileName = getFilesDir().getAbsolutePath();
         if (listOfFiles.length > 0) {
-            newFileName += "/UserBeat_" + (listOfFiles.length + 1) + ".mp4";
+            newFileName += "/UserBeat_" + (countOfUserBeatFiles + 1) + ".mp4";
         } else {
             newFileName += "/UserBeat_1.mp4";
         }

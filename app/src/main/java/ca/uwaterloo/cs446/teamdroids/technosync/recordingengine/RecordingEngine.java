@@ -53,7 +53,6 @@ public class RecordingEngine extends Subscriber {
             return;
         }
 
-
         //Update current state
         currentState.setStateArray(stateArray);
 
