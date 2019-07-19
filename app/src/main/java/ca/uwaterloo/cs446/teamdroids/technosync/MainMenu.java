@@ -28,7 +28,7 @@ public class MainMenu extends AppCompatActivity {
     public Button practiceButton;
     public Button recordCustomBeatButton;
     public Button changePresetsButton;
-    public Button viewRecordingsButton;
+    public Button viewComposedSongsButton;
     public Button startGroupSession;
     public TextView connectionErrorText;
     public EditText groupCodeEditText;
@@ -66,8 +66,8 @@ public class MainMenu extends AppCompatActivity {
         setupCustomBeatButton();
         changePresetsButton = (Button) findViewById(R.id.createPreset2) ;
         setupChangePresetsButton();
-        viewRecordingsButton = (Button) findViewById(R.id.audioArchive);
-        setupViewRecordingButton();
+        viewComposedSongsButton = (Button) findViewById(R.id.audioArchive);
+        setupViewComposedSongsButton();
         connectionErrorText = (TextView) findViewById(R.id.connection_error);
         connectionErrorText.setVisibility(View.GONE);
 
@@ -88,7 +88,7 @@ public class MainMenu extends AppCompatActivity {
         createGroupSessionButton.setEnabled(false);
         joinGroupSessionButton.setEnabled(false);
         recordCustomBeatButton.setEnabled(false);
-        viewRecordingsButton.setEnabled(false);
+        viewComposedSongsButton.setEnabled(false);
 
         connectionErrorText.setVisibility(View.VISIBLE);
 
@@ -96,7 +96,7 @@ public class MainMenu extends AppCompatActivity {
         createGroupSessionButton.setAlpha(0.5f);
         joinGroupSessionButton.setAlpha(0.5f);
         recordCustomBeatButton.setAlpha(0.5f);
-        viewRecordingsButton.setAlpha(0.5f);
+        viewComposedSongsButton.setAlpha(0.5f);
     }
 
     //Check if server is up
@@ -328,7 +328,15 @@ public class MainMenu extends AppCompatActivity {
         // TODO: Implement it
     }
 
-    private void setupViewRecordingButton() {
-        // TODO: Implement it #2
+    private void setupViewComposedSongsButton() {
+
+        viewComposedSongsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent viewComposedSongsIntent = new Intent(getBaseContext(), ComposedSongsView.class);
+
+                startActivity(viewComposedSongsIntent);
+            }
+        });
     }
 }
