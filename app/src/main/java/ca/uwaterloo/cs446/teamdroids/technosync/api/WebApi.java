@@ -6,11 +6,12 @@ import com.google.gson.GsonBuilder;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 public class WebApi {
 
     private static WebApi instance = null;
-    private static final String BASE_URL = "http://thiserverdoesnotexist";
+    private static final String BASE_URL = "http://10.0.2.2:5000/";
 
     private TechnoSynchService technoSynchService;
 
@@ -28,8 +29,8 @@ public class WebApi {
 
     private void buildRetrofit() {
         Retrofit retrofit = new Retrofit.Builder()
+                .addConverterFactory(ScalarsConverterFactory.create())
                 .baseUrl(BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
         this.technoSynchService = retrofit.create(TechnoSynchService.class);

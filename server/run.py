@@ -1,13 +1,14 @@
-from flask import Flask, request, send_file
-from room import Room
-from music import FileOffsetRecording
-
+from datetime import datetime
 from typing import Dict
-import uuid
+
+from flask import Flask, request, send_file
+
+from music import BeatTimestamp, FileOffsetRecording
+from room import Room
 
 app = Flask(__name__)
 
-rooms: Dict[uuid.UUID, Room] = {}
+rooms: Dict[str, Room] = {}
 
 
 @app.route("/")
@@ -29,19 +30,20 @@ def create_room():
     #     'user_id': str(new_user.id),
     #     'room_id': str(new_room.id),
     # }
-    new_room = Room()
+    room_id = Room.gen_room_id(rooms.keys())
+    new_room = Room(room_id)
     rooms[new_room.id] = new_room
     app.logger.debug('room created: %s', str(new_room))
     return str(new_room.id)
 
 
 # Allows a new user to validate their room ID
-@app.route("/<string:room_id>/is-valid-room-id-", methods=['POST'])
+@app.route("/<string:room_id>/is-valid-room-id", methods=['POST'])
 def is_valid_room_id(room_id):
     # new_user = User
     # rooms[uuid.UUID(room_id)].join(new_user)
     app.logger.debug('validating room: %s', room_id)
-    return uuid.UUID(room_id) in rooms
+    return str(room_id in rooms)
 
 
 # --------------------------------------------------------
@@ -54,7 +56,7 @@ def is_valid_room_id(room_id):
 @app.route("/<string:room_id>/start-recording", methods=['POST'])
 def start_recording(room_id):
     app.logger.debug('a user started recording: %s', room_id)
-    rooms[uuid.UUID(room_id)].start_recording()
+    rooms[room_id].start_recording()
     return 0
 
 
@@ -63,11 +65,11 @@ def start_recording(room_id):
 # {
 #   'start_time': "%H:%M:%S.%f" (f is microseconds)
 #   'end_time': "%H:%M:%S.%f"
-#   'offsets' : [
+#   'events' : [
 #       {
 #           filename: string,   -- name of the audio file (uploaded and default)
-#           offset: int,        -- offset in milliseconds
-#           times: int,         -- number of times to repeat the audio file
+#           time: "%H:%M:%S.%f"
+#           loopable: bool
 #       },
 #       ...
 #   ]
@@ -79,12 +81,19 @@ def stop_recording(room_id):
 
     json = request.get_json()
     app.logger.debug(json)
-    new_timing = FileOffsetRecording(json['start_time'],
-                                     json['end_time'],
-                                     json['offsets'], )
-    complete = rooms[uuid.UUID(room_id)].stop_recording(new_timing)
+    timestamps = [
+        BeatTimestamp(
+            bool(e['loopable']),
+            datetime.strptime(e['time'], "%H:%M:%S.%f"),
+            e['filename']
+        ) for e in json['events']]
+    new_timing = FileOffsetRecording(
+        datetime.strptime(json['start_time'], "%H:%M:%S.%f"),
+        datetime.strptime(json['end_time'], "%H:%M:%S.%f"),
+        timestamps)
+    complete = rooms[room_id].stop_recording(new_timing)
     app.logger.debug('last user: %b', complete)
-    return complete
+    return str(complete)
 
 
 # Upload a sound file to current recording session
@@ -95,7 +104,7 @@ def upload_sound(room_id):
     filename = request.files.keys[0]
     app.logger.debug('new file %s uploaded to room %s', filename, room_id)
     file = request.files[filename]
-    return rooms[uuid.UUID(room_id)].add_new_sound(filename, file)
+    return str(rooms[room_id].add_new_sound(filename, file))
 
 
 # --------------------------------------------------------
@@ -108,7 +117,7 @@ def upload_sound(room_id):
 @app.route("/<string:room_id>/is-recording-complete")
 def is_recording_complete(room_id):
     app.logger.debug('checking whether recording is complete for room %s', room_id)
-    return not rooms[uuid.UUID(room_id)].is_recording()
+    return str(not rooms[room_id].is_recording())
 
 
 # Returns the generated composition as an mp3 file
@@ -116,7 +125,7 @@ def is_recording_complete(room_id):
 @app.route("/<string:room_id>/get-composition")
 def get_composition(room_id):
     app.logger.debug('getting composition for room %s', room_id)
-    file = rooms[uuid.UUID(room_id)].get_composition_as_mp3()
+    file = rooms[room_id].get_composition_as_mp3()
     return send_file(file)
 
 

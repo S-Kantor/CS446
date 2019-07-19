@@ -4,6 +4,7 @@ import datetime
 from music import MusicProducer
 
 ROOM_EXPIRY_DELTA = datetime.timedelta(days=10)
+ID_LENGTH = 4
 
 
 # class User:
@@ -18,12 +19,12 @@ class Room:
     # creator: User
     # guests: {}
 
-    id: uuid.UUID
+    id: str
     recording: bool
     music_producer: MusicProducer
 
-    def __init__(self):
-        self.id = uuid.uuid4()
+    def __init__(self, room_id):
+        self.id = room_id
         self.creation_time = datetime.datetime.now()
 
         self.total_users = 1
@@ -57,3 +58,10 @@ class Room:
 
     def add_new_sound(self, filename, file):
         self.music_producer.add_new_sound(filename, file)
+
+    @staticmethod
+    def gen_room_id(existing_ids):
+        result = str(uuid.uuid4())[:ID_LENGTH]
+        while result in existing_ids:
+            result = str(uuid.uuid4())[:ID_LENGTH]
+        return result
