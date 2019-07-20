@@ -31,12 +31,12 @@ class Room:
         self.recording_users = 0
         self.finished_users = 0
 
+        self.music_producer = MusicProducer()
+
         # self.creator = creator
         # self.guests = {}
 
     def start_recording(self):
-        if self.recording_users == 0:
-            self.music_producer = MusicProducer()
         self.recording_users += 1
 
     def stop_recording(self, new_timing):
