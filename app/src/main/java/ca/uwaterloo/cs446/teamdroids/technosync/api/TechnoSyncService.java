@@ -31,8 +31,11 @@ public interface TechnoSyncService {
             @Part MultipartBody.Part file
     );
 
+    @POST("startRecording")
+    Call<RecordingList> startRecording(@Path(value = "room-id") String roomId);
+
     @POST("stopRecording")
-    Call<RecordingList> stopRecording(@Query("roomId") String roomId);
+    Call<RecordingList> stopRecording(@Path(value = "room-id") String roomId);
 
 
     @Streaming

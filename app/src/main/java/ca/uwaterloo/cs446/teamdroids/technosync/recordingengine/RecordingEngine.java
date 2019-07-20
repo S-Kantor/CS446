@@ -57,8 +57,34 @@ public class RecordingEngine extends Subscriber {
         recordingList.newEntry(new RecordingEntry(fileString, true));
     }
 
+    //Notify server that client is recording
+    private void startRecording() {
+        recording = true;
+        recordingStartTime = new SimpleDateFormat("%D:%H:%M:%S.%f", Locale.CANADA).format(new Date());
+
+        Call<RecordingList> call = webApi.getTechnoSyncService().startRecording(groupId);
+        call.enqueue(new Callback<RecordingList>() {
+            @Override
+            public void onResponse(Call<RecordingList> call, Response<RecordingList> response) {
+                if (response.isSuccessful()) {
+                    Log.i("TechnoSynch", "Call succeeded");
+                } else {
+                    Log.i("TechnoSynch", "Got an error response, maybe like a 403");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<RecordingList> call, Throwable t) {
+                Log.i("TechnoSynch", "Actual http call failed (no internet, wrong url, etc.");
+            }
+        });
+    }
+
     //Send local recording to server
-    public void sendRecording() {
+    private void sendRecording() {
+        recording = false;
+        recordingEndTime = new SimpleDateFormat("%D:%H:%M:%S.%f", Locale.CANADA).format(new Date());
+
         //Upload
         Call<RecordingList> call = webApi.getTechnoSyncService().stopRecording(groupId);
         call.enqueue(new Callback<RecordingList>() {
@@ -87,14 +113,11 @@ public class RecordingEngine extends Subscriber {
             //Handle events with no data
             //Start recording
             if (eventType == EventType.RECORDING_START) {
-                recording = true;
-                recordingStartTime = new SimpleDateFormat("%D:%H:%M:%S.%f", Locale.CANADA).format(new Date());
+                startRecording();
                 return;
             }
             //Stop Recording
             else if (eventType == EventType.RECORDING_END) {
-                recording = false;
-                recordingEndTime = new SimpleDateFormat("%D:%H:%M:%S.%f", Locale.CANADA).format(new Date());
                 sendRecording();
                 return;
             }
