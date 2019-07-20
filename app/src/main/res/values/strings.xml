@@ -2,4 +2,5 @@
     <string name="app_name">TechnoSync</string>
     <string name="title_activity_beat_pad">BeatPad</string>
     <string name="title_activity_note_pad">NotePad</string>
+    <string name="title_activity_change_preset_view">ChangePresetView</string>
 </resources>

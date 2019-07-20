@@ -326,6 +326,16 @@ public class MainMenu extends AppCompatActivity {
 
     private void setupChangePresetsButton() {
         // TODO: Implement it
+        changePresetsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Open Music  Creation Window
+                Intent changePreset = new Intent(getBaseContext(), ChangePresetView.class);
+
+                //Clear activity stack and start new activity
+                startActivity(changePreset);
+            }
+        });
     }
 
     private void setupViewRecordingButton() {
