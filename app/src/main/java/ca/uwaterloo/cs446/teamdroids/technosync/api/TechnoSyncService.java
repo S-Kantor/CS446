@@ -15,6 +15,9 @@ import retrofit2.http.Streaming;
 
 public interface TechnoSyncService {
 
+    @GET("health-check")
+    Call<String> healthCheck();
+
     @POST("create-room")
     Call<String> createRoom();
 

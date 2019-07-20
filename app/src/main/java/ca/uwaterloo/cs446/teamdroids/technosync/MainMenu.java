@@ -37,7 +37,7 @@ public class MainMenu extends AppCompatActivity {
     public WebApi webApi;
 
     //Animate background
-    private void animateBackground(){
+    private void animateBackground() {
         AnimationDrawable animationDrawable = (AnimationDrawable) findViewById(R.id.main_screen_layout).getBackground();
         animationDrawable.setEnterFadeDuration(10);
         animationDrawable.setExitFadeDuration(5000);
@@ -65,7 +65,7 @@ public class MainMenu extends AppCompatActivity {
         setupPracticeButton();
         recordCustomBeatButton = (Button) findViewById(R.id.recordAudioButton2);
         setupCustomBeatButton();
-        changePresetsButton = (Button) findViewById(R.id.createPreset2) ;
+        changePresetsButton = (Button) findViewById(R.id.createPreset2);
         setupChangePresetsButton();
         viewComposedSongsButton = (Button) findViewById(R.id.audioArchive);
         setupViewComposedSongsButton();
@@ -83,7 +83,7 @@ public class MainMenu extends AppCompatActivity {
     }
 
     //Disabled server backed buttons
-    private void disabledServerButtons(){
+    private void disabledServerButtons() {
         //Disable
         findViewById(R.id.connection_error).setVisibility(View.VISIBLE);
         createGroupSessionButton.setEnabled(false);
@@ -100,27 +100,35 @@ public class MainMenu extends AppCompatActivity {
         viewComposedSongsButton.setAlpha(0.5f);
     }
 
+    public void redoServerCheck(View view) {
+        Toast.makeText(view.getContext(), "checking server again",
+                Toast.LENGTH_LONG).show();
+        checkServerConnection();
+    }
+
     //Check if server is up
-    private void checkServerConnection(){
-        try{
-            //Test Upload
-            Call<String> call = webApi.getTechnoSyncService().createRoom();
+    private void checkServerConnection() {
+        try {
+            Call<String> call = webApi.getTechnoSyncService().healthCheck();
             call.enqueue(new Callback<String>() {
                 @Override
                 public void onResponse(Call<String> call, Response<String> response) {
-                    newGroupId = response.body();
-                    Log.i("TechnoSync", "Server check succeeded and created new room");
+                    if (response.body() != null && response.body().equals("I'm Alive!")) {
+                        Log.i("TechnoSync", "Server health check succeeded");
+                    } else {
+                        Log.i("TechnoSync", "Server check failed, garbage health check");
+                        disabledServerButtons();
+                    }
                 }
 
                 @Override
                 public void onFailure(Call<String> call, Throwable t) {
-                    Log.i("TechnoSync", "Server check failed");
+                    Log.e("TechnoSync", "Server check failed",t);
                     disabledServerButtons();
                 }
             });
-        }
-        catch (Exception ex){
-            Log.i("Server Error" , "Can not connect! Restart App!");
+        } catch (Exception ex) {
+            Log.i("Server Error", "Can not connect! Restart App!");
             disabledServerButtons();
         }
     }
@@ -151,7 +159,7 @@ public class MainMenu extends AppCompatActivity {
                 @Override
                 public void onResponse(Call<String> call, Response<String> response) {
                     Log.i("TechnoSync", "Room available to join room");
-                    String is_valid =  response.body();
+                    String is_valid = response.body();
 
                     if (is_valid.equals("True")) {
                         //Open Music  Creation Window
@@ -165,8 +173,7 @@ public class MainMenu extends AppCompatActivity {
 
                         // Close the current popup
                         popupWindow.dismiss();
-                    }
-                    else {
+                    } else {
                         String message = "Incorrect Group Code. Please try again!";
                         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
                     }
@@ -184,7 +191,7 @@ public class MainMenu extends AppCompatActivity {
                 }
             });
         } catch (Exception e) {
-            Log.i("Server Error" , "Can not connect! Restart App!");
+            Log.i("Server Error", "Can not connect! Restart App!");
 
             // Close the current popup
             popupWindow.dismiss();
@@ -192,34 +199,50 @@ public class MainMenu extends AppCompatActivity {
     }
 
     private void setupCreateGroupSessionButton() {
-        createGroupSessionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-                View popupView = inflater.inflate(R.layout.create_group_popup_view, null);
+        createGroupSessionButton.setOnClickListener(v -> {
+            try {
+                Call<String> call = webApi.getTechnoSyncService().createRoom();
+                call.enqueue(new Callback<String>() {
+                    @Override
+                    public void onResponse(Call<String> call, Response<String> response) {
+                        newGroupId = response.body();
 
-                // create the popup window
-                int width = 800;
-                int height = 700;
-                boolean focusable = true; // lets taps outside the popup also dismiss it
-                final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
+                        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+                        View popupView = inflater.inflate(R.layout.create_group_popup_view, null);
 
-                // show the popup window
-                // which view you pass in doesn't matter, it is only used for the window tolken
-                popupWindow.showAtLocation(v, Gravity.CENTER, 0, 0);
+                        // create the popup window
+                        int width = 800;
+                        int height = 700;
+                        boolean focusable = true; // lets taps outside the popup also dismiss it
+                        final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
 
-                startGroupSession = (Button) popupView.findViewById(R.id.startGroupSession);
-                TextView groupCode = (TextView) popupView.findViewById(R.id.joinGroupCode);
-                groupCode.setText(newGroupId);
+                        // show the popup window
+                        // which view you pass in doesn't matter, it is only used for the window tolken
+                        popupWindow.showAtLocation(v, Gravity.CENTER, 0, 0);
 
-                // Closes the popup window when touch outside.
-                popupWindow.setOutsideTouchable(true);
-                popupWindow.setFocusable(true);
-                // Removes default background.
-                popupWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                        startGroupSession = (Button) popupView.findViewById(R.id.startGroupSession);
+                        TextView groupCode = (TextView) popupView.findViewById(R.id.joinGroupCode);
+                        groupCode.setText(newGroupId);
 
-                // Setup button to start the recording session
-                setupStartGroupSessionButton(Boolean.TRUE, popupWindow);
+                        // Closes the popup window when touch outside.
+                        popupWindow.setOutsideTouchable(true);
+                        popupWindow.setFocusable(true);
+                        // Removes default background.
+                        popupWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+                        // Setup button to start the recording session
+                        setupStartGroupSessionButton(Boolean.TRUE, popupWindow);
+                    }
+
+                    @Override
+                    public void onFailure(Call<String> call, Throwable t) {
+                        Log.i("TechnoSync", "Server connection failed");
+                        disabledServerButtons();
+                    }
+                });
+            } catch (Exception ex) {
+                Log.i("Server Error", "Can not connect! Restart App!");
+                disabledServerButtons();
             }
         });
     }

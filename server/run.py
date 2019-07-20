@@ -122,8 +122,14 @@ def get_composition(room_id):
 
 
 # --------------------------------------------------------
-# Server Cleanup
+# Misc.
 # --------------------------------------------------------
+
+# Simple health check to test connection to server
+@app.route("/health-check")
+def health_check():
+    return "I'm Alive!"
+
 
 # Can be called as an hourly chron job to clean expired data
 @app.route("/cleanup", methods=['POST'])

@@ -159,6 +159,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginBottom="8dp"
+        android:onClick="redoServerCheck"
         android:text="Disconnected From Server"
         android:textColor="#FF0000"
         app:layout_constraintBottom_toTopOf="@+id/button-layout"
