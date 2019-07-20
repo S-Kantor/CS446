@@ -6,19 +6,7 @@ from music import MusicProducer
 ROOM_EXPIRY_DELTA = datetime.timedelta(days=10)
 ID_LENGTH = 4
 
-
-# class User:
-#     id: uuid.UUID
-#     recording: bool
-#
-#     def __init__(self):
-#         self.id = uuid.uuid4()
-#         self.recording = True
-
 class Room:
-    # creator: User
-    # guests: {}
-
     id: str
     recording: bool
     music_producer: MusicProducer
@@ -33,8 +21,6 @@ class Room:
 
         self.music_producer = MusicProducer()
 
-        # self.creator = creator
-        # self.guests = {}
 
     def start_recording(self):
         self.recording_users += 1
