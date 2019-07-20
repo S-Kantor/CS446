@@ -146,7 +146,6 @@ public class MainMenu extends AppCompatActivity {
         }
 
         try {
-
             Call<String> call = webApi.getTechnoSynchService().joinRoom(groupId);
             call.enqueue(new Callback<String>() {
                 @Override
