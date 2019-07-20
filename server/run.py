@@ -24,12 +24,6 @@ def hello():
 # The room ID is necessary for all future interactions
 @app.route("/create-room", methods=['POST'])
 def create_room():
-    # new_user = User
-    # new_room = Room(new_user)
-    # return {
-    #     'user_id': str(new_user.id),
-    #     'room_id': str(new_room.id),
-    # }
     room_id = Room.gen_room_id(rooms.keys())
     new_room = Room(room_id)
     rooms[new_room.id] = new_room
@@ -40,8 +34,6 @@ def create_room():
 # Allows a new user to validate their room ID
 @app.route("/<string:room_id>/is-valid-room-id", methods=['POST'])
 def is_valid_room_id(room_id):
-    # new_user = User
-    # rooms[uuid.UUID(room_id)].join(new_user)
     app.logger.debug('validating room: %s', room_id)
     return str(room_id in rooms)
 
