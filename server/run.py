@@ -55,12 +55,12 @@ def start_recording(room_id):
 # Informs the server that a user is finished recording and provides
 #   the FileOffsetRecordings as a json in the following format:
 # {
-#   'start_time': "%H:%M:%S.%f" (f is microseconds)
-#   'end_time': "%H:%M:%S.%f"
+#   'start_time': "%D:%H:%M:%S.%f" (f is microseconds)
+#   'end_time': "%D:%H:%M:%S.%f"
 #   'events' : [
 #       {
 #           filename: string,   -- name of the audio file (uploaded and default)
-#           time: "%H:%M:%S.%f"
+#           time: "%D:%H:%M:%S.%f"
 #           loopable: bool
 #       },
 #       ...
@@ -76,12 +76,12 @@ def stop_recording(room_id):
     timestamps = [
         BeatTimestamp(
             bool(e['loopable']),
-            datetime.strptime(e['time'], "%H:%M:%S.%f"),
+            datetime.strptime(e['time'], "%D:%H:%M:%S.%f"),
             e['filename']
         ) for e in json['events']]
     new_timing = FileOffsetRecording(
-        datetime.strptime(json['start_time'], "%H:%M:%S.%f"),
-        datetime.strptime(json['end_time'], "%H:%M:%S.%f"),
+        datetime.strptime(json['start_time'], "%D:%H:%M:%S.%f"),
+        datetime.strptime(json['end_time'], "%D:%H:%M:%S.%f"),
         timestamps)
     complete = rooms[room_id].stop_recording(new_timing)
     app.logger.debug('last user: %b', complete)
