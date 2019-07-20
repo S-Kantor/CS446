@@ -2,9 +2,11 @@ package ca.uwaterloo.cs446.teamdroids.technosync;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.media.MediaPlayer;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,8 +16,13 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Dictionary;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ComposedSongsView extends AppCompatActivity {
 
@@ -23,6 +30,8 @@ public class ComposedSongsView extends AppCompatActivity {
     private ListView songsListView;
     private ListViewAdapter listAdapter;
     private ArrayList<ComposedSongModel> composedSongsList;
+
+    private MediaPlayer player = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,12 +63,46 @@ public class ComposedSongsView extends AppCompatActivity {
         String[] songs = {"room1", "room2", "room3", "room4"}; //finishedSongsString.split(",");
         ArrayList<ComposedSongModel> songsList = new ArrayList<ComposedSongModel>();
 
+        Map<String, String> fileDict = new HashMap<String, String>();
+        File[] files = getFilesDir().listFiles();
+        for (File file : files) {
+            if (file.getName().endsWith(".mp3") & file.getName().contains("/composed_song")) {
+                fileDict.put(getFileNameFromPath(file.getAbsolutePath()), file.getAbsolutePath());
+            }
+        }
+
         for (int i = songs.length - 1; i >= 0; i--) {
             String groupId = songs[i];
-            songsList.add(new ComposedSongModel(groupId));
+            String filePath = fileDict.get("composed_song_" + groupId + ".mp3");
+
+            songsList.add(new ComposedSongModel(groupId, filePath));
         }
 
         return songsList;
+    }
+
+    private String getFileNameFromPath(String filePath) {
+        int lastSlash = filePath.lastIndexOf("/");
+        return filePath.substring(lastSlash + 1);
+    }
+
+    private void startPlaying(String filePath) {
+        stopPlaying();
+
+        player = new MediaPlayer();
+        try {
+            player.setDataSource(filePath);
+            player.prepare();
+            player.start();
+        } catch (IOException e) {
+        }
+    }
+
+    private void stopPlaying() {
+        if (player != null) {
+            player.release();
+            player = null;
+        }
     }
 
     public Button.OnClickListener onDownloadButtonClickListener = new Button.OnClickListener() {
@@ -71,12 +114,12 @@ public class ComposedSongsView extends AppCompatActivity {
 
             ComposedSongModel selectedSong = composedSongsList.get((int)view.getTag());
 
-            // TODO: DOWNLOAD SONG HERE USING THE GROUP ID and set selectedSong property to downloaded
             if (!selectedSong.isDownloaded()) {
                 view.setAlpha(0.5f);
                 view.setEnabled(false);
 
-                // START DOWNLOAD NOW and enable Play Button once downloaded
+                // TODO: DOWNLOAD SONG HERE USING THE GROUP ID and set selectedSong property to downloaded
+                // START DOWNLOAD NOW and enable Play Button once downloaded, set isDownloaded to true
             }
         }
     };
@@ -91,15 +134,18 @@ public class ComposedSongsView extends AppCompatActivity {
             ComposedSongModel selectedSong = composedSongsList.get((int)view.getTag());
             Button playButton = (Button) view;
 
-            // TODO: PLAY SONG HERE USING THE GROUP ID and set isPlaying property to true
             if (selectedSong.isPlaying()) {
                 // Pause here
                 selectedSong.setIsPlaying(false);
                 playButton.setText("PLAY");
+
+                stopPlaying();
             } else {
                 // Play here
                 selectedSong.setIsPlaying(true);
                 playButton.setText("PAUSE");
+
+                startPlaying(selectedSong.getFilePath());
             }
         }
     };
