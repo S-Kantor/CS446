@@ -8,6 +8,7 @@
 
     <Button
         android:id="@+id/recordButton"
+        style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -15,7 +16,10 @@
         android:layout_marginTop="28dp"
         android:text="Button"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="@drawable/button_rounded"
+        android:textColor="@android:color/white"
+        android:backgroundTint="@android:color/holo_red_dark"/>
 
     <Button
         android:id="@+id/playButton"
@@ -29,7 +33,11 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.342"
         app:layout_constraintStart_toEndOf="@+id/recordButton"
-        app:layout_constraintTop_toTopOf="@+id/recordButton" />
+        app:layout_constraintTop_toTopOf="@+id/recordButton"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:background="@drawable/button_rounded"
+        android:textColor="@android:color/white"
+        android:backgroundTint="@android:color/holo_blue_dark"/>
 
     <ListView
         android:id="@+id/listOfFileNames"

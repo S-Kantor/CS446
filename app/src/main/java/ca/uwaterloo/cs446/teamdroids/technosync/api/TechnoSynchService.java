@@ -13,6 +13,7 @@ import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 import retrofit2.http.Headers;
+import retrofit2.http.Streaming;
 
 public interface TechnoSynchService {
 
@@ -34,5 +35,9 @@ public interface TechnoSynchService {
             @Part("description") RequestBody description,
             @Part MultipartBody.Part file
     );
+
+    @Streaming
+    @GET("{room-id}/get-composition")
+    Call<ResponseBody> downloadComposedSongAsMp3(@Path(value = "room-id") String roomId);
 
 }

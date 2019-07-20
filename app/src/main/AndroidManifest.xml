@@ -22,6 +22,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="ca.uwaterloo.cs446.teamdroids.technosync.MainMenu" />
         </activity>
+        <activity android:name=".ComposedSongsView"></activity>
         <activity android:name=".MainMenu">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
