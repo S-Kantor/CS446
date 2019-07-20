@@ -3,16 +3,12 @@ package ca.uwaterloo.cs446.teamdroids.technosync.recordingengine;
 import android.util.Base64;
 import android.util.Log;
 
-import com.google.gson.Gson;
-
 import java.io.ByteArrayInputStream;
 import java.io.ObjectInputStream;
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
-import ca.uwaterloo.cs446.teamdroids.technosync.api.ApiPath;
-import ca.uwaterloo.cs446.teamdroids.technosync.api.RoomResponse;
 import ca.uwaterloo.cs446.teamdroids.technosync.api.WebApi;
 import ca.uwaterloo.cs446.teamdroids.technosync.common.StateArray;
 import ca.uwaterloo.cs446.teamdroids.technosync.common.Tile;
@@ -30,10 +26,11 @@ public class RecordingEngine extends Subscriber {
     RecordingList recordingList;
     WebApi webApi;
     boolean recording = false;
+    String recordingStartTime, recordingEndTime;
     String groupId = "";
 
     //Record changes to instrument pad
-    public void instrumentPadUpdate(Tile tile){
+    public void instrumentPadUpdate(Tile tile) {
         if (!recording) return;
         RecordingEntry recordingEntry = new RecordingEntry(tile.getFileString(), false);
         recordingList.newEntry(recordingEntry);
@@ -41,15 +38,15 @@ public class RecordingEngine extends Subscriber {
 
 
     //Record changes playing beats
-    public void loopPadUpdate(StateArray stateArray){
-        if(!recording) return;
+    public void loopPadUpdate(StateArray stateArray) {
+        if (!recording) return;
 
         //Get hit tile value
         Integer changedTile = currentState.determineChange(stateArray);
         String fileString = currentState.tileIdToFileName(changedTile, true);
 
         //No chaange, so don't record
-        if(changedTile == -1){
+        if (changedTile == -1) {
             return;
         }
 
@@ -61,7 +58,7 @@ public class RecordingEngine extends Subscriber {
     }
 
     //Send local recording to server
-    public void sendRecording(){
+    public void sendRecording() {
         //Upload
         Call<RecordingList> call = webApi.getTechnoSynchService().publishRecording(groupId);
         call.enqueue(new Callback<RecordingList>() {
@@ -82,7 +79,7 @@ public class RecordingEngine extends Subscriber {
     }
 
     //Receive event from event bus
-    public void notify(EventPackage eventPackage){
+    public void notify(EventPackage eventPackage) {
         try {
             EventType eventType = eventPackage.getEventType();
 
@@ -91,11 +88,13 @@ public class RecordingEngine extends Subscriber {
             //Start recording
             if (eventType == EventType.RECORDING_START) {
                 recording = true;
+                recordingStartTime = new SimpleDateFormat("%D:%H:%M:%S.%f", Locale.CANADA).format(new Date());
                 return;
             }
             //Stop Recording
             else if (eventType == EventType.RECORDING_END) {
                 recording = false;
+                recordingEndTime = new SimpleDateFormat("%D:%H:%M:%S.%f", Locale.CANADA).format(new Date());
                 sendRecording();
                 return;
             }
@@ -128,28 +127,25 @@ public class RecordingEngine extends Subscriber {
                 loopPadUpdate(stateArray);
             }
 
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             //Error
             // TODO needs logger.
         }
     }
 
     //Get recording status
-    public boolean isRecording(){
+    public boolean isRecording() {
         return recording;
     }
 
 
     //Initialize
-    public RecordingEngine(WebApi webApi, String groupId){
+    public RecordingEngine(WebApi webApi, String groupId) {
         this.currentState = new CurrentState();
         this.recordingList = new RecordingList();
         this.webApi = webApi;
         this.groupId = groupId;
     }
-
-
 
 
 }
