@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -242,7 +241,7 @@ public class CustomRecordingView extends AppCompatActivity {
                         okhttp3.MultipartBody.FORM, descriptionString);
 
         // finally, execute the request
-        Call<ResponseBody> call = WebApi.getInstance().getTechnoSynchService().uploadCustomAudio(description, body);
+        Call<ResponseBody> call = WebApi.getInstance().getTechnoSyncService().uploadCustomAudio(description, body);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call,

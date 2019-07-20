@@ -9,16 +9,11 @@ import retrofit2.http.GET;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
-import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
-import retrofit2.http.Headers;
 import retrofit2.http.Streaming;
 
-public interface TechnoSynchService {
-
-    @GET("publishRecording")
-    Call<RecordingList> publishRecording(@Query("roomId") String roomId);
+public interface TechnoSyncService {
 
     @POST("create-room")
     Call<String> createRoom();
@@ -26,15 +21,16 @@ public interface TechnoSynchService {
     @POST("{room-id}/is-valid-room-id")
     Call<String> joinRoom(@Path(value = "room-id") String roomId);
 
-    @GET("getRecording")
-    Call<RecordingList> getRecording(@Query("roomId") int roomId);
-
     @Multipart
     @POST("upload")
-    Call<ResponseBody> uploadCustomAudio (
+    Call<ResponseBody> uploadCustomAudio(
             @Part("description") RequestBody description,
             @Part MultipartBody.Part file
     );
+
+    @POST("stopRecording")
+    Call<RecordingList> stopRecording(@Query("roomId") String roomId);
+
 
     @Streaming
     @GET("{room-id}/get-composition")

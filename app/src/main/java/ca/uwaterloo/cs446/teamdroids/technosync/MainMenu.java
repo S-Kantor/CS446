@@ -104,7 +104,7 @@ public class MainMenu extends AppCompatActivity {
     private void checkServerConnection(){
         try{
             //Test Upload
-            Call<String> call = webApi.getTechnoSynchService().createRoom();
+            Call<String> call = webApi.getTechnoSyncService().createRoom();
             call.enqueue(new Callback<String>() {
                 @Override
                 public void onResponse(Call<String> call, Response<String> response) {
@@ -146,7 +146,7 @@ public class MainMenu extends AppCompatActivity {
         }
 
         try {
-            Call<String> call = webApi.getTechnoSynchService().joinRoom(groupId);
+            Call<String> call = webApi.getTechnoSyncService().joinRoom(groupId);
             call.enqueue(new Callback<String>() {
                 @Override
                 public void onResponse(Call<String> call, Response<String> response) {

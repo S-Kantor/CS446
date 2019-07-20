@@ -11,7 +11,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -25,9 +24,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.Dictionary;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import ca.uwaterloo.cs446.teamdroids.technosync.api.WebApi;
@@ -123,7 +120,7 @@ public class ComposedSongsView extends AppCompatActivity {
             view.setAlpha(0.5f);
             view.setEnabled(false);
 
-            Call<ResponseBody> call = WebApi.getInstance().getTechnoSynchService().downloadComposedSongAsMp3(song.getGroupId());
+            Call<ResponseBody> call = WebApi.getInstance().getTechnoSyncService().downloadComposedSongAsMp3(song.getGroupId());
             call.enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {

@@ -60,7 +60,7 @@ public class RecordingEngine extends Subscriber {
     //Send local recording to server
     public void sendRecording() {
         //Upload
-        Call<RecordingList> call = webApi.getTechnoSynchService().publishRecording(groupId);
+        Call<RecordingList> call = webApi.getTechnoSyncService().stopRecording(groupId);
         call.enqueue(new Callback<RecordingList>() {
             @Override
             public void onResponse(Call<RecordingList> call, Response<RecordingList> response) {

@@ -2,10 +2,7 @@ package ca.uwaterloo.cs446.teamdroids.technosync.api;
 
 import android.util.Log;
 
-import com.google.gson.GsonBuilder;
-
 import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 public class WebApi {
@@ -13,7 +10,7 @@ public class WebApi {
     private static WebApi instance = null;
     private static final String BASE_URL = "http://10.0.2.2:5000/";
 
-    private TechnoSynchService technoSynchService;
+    private TechnoSyncService technoSyncService;
 
     public static WebApi getInstance() {
         if (instance == null) {
@@ -33,12 +30,12 @@ public class WebApi {
                 .baseUrl(BASE_URL)
                 .build();
 
-        this.technoSynchService = retrofit.create(TechnoSynchService.class);
+        this.technoSyncService = retrofit.create(TechnoSyncService.class);
     }
 
 
-    public TechnoSynchService getTechnoSynchService() {
-        return this.technoSynchService;
+    public TechnoSyncService getTechnoSyncService() {
+        return this.technoSyncService;
     }
 
     // USAGE:
