@@ -6,6 +6,7 @@ from music import MusicProducer
 ROOM_EXPIRY_DELTA = datetime.timedelta(days=10)
 ID_LENGTH = 4
 
+
 class Room:
     id: str
     recording: bool
@@ -21,19 +22,20 @@ class Room:
 
         self.music_producer = MusicProducer()
 
-
     def start_recording(self):
         self.recording_users += 1
 
-    def stop_recording(self, new_timing):
+    def stop_recording(self, offset_recording):
         self.recording_users -= 1
-        self.music_producer.add_timing(new_timing)
-        return self.recording_users == 0
+        self.music_producer.add_offset_recording(offset_recording)
+        if self.recording_users == 0:
+            self.music_producer.produce()
+        return self.recording_users
 
     def get_composition_as_mp3(self):
         return self.music_producer.get_composition_as_mp3()
 
-    def is_recording(self):
+    def is_recording_complete(self):
         return self.recording_users == 0
 
     def is_expired(self):

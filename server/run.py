@@ -79,11 +79,11 @@ def stop_recording(room_id):
     app.logger.debug(json)
     timestamps = [BeatTimestamp(bool(e['loopable']), parse_time(e['dateTime']), e['fileName'])
                   for e in json['recordingEntries']]
-    new_timing = FileOffsetRecording(
+    offset_recording = FileOffsetRecording(
         parse_time(json['startTime']),
         parse_time(json['endTime']),
         timestamps)
-    complete = rooms[room_id].stop_recording(new_timing)
+    complete = rooms[room_id].stop_recording(offset_recording)
     app.logger.debug('last user: %s', complete)
     return str(complete)
 
@@ -109,7 +109,7 @@ def upload_sound(room_id):
 @app.route("/<string:room_id>/is-recording-complete")
 def is_recording_complete(room_id):
     app.logger.debug('checking whether recording is complete for room %s', room_id)
-    return str(not rooms[room_id].is_recording())
+    return str(rooms[room_id].is_recording_complete())
 
 
 # Returns the generated composition as an mp3 file
