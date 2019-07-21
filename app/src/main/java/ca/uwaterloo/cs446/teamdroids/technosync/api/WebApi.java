@@ -1,8 +1,7 @@
 package ca.uwaterloo.cs446.teamdroids.technosync.api;
 
-import android.util.Log;
-
 import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 public class WebApi {
@@ -20,13 +19,14 @@ public class WebApi {
         return instance;
     }
 
-    private WebApi () {
+    private WebApi() {
         buildRetrofit();
     }
 
     private void buildRetrofit() {
         Retrofit retrofit = new Retrofit.Builder()
                 .addConverterFactory(ScalarsConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create())
                 .baseUrl(BASE_URL)
                 .build();
 
@@ -37,14 +37,4 @@ public class WebApi {
     public TechnoSyncService getTechnoSyncService() {
         return this.technoSyncService;
     }
-
-    // USAGE:
-    //
-
-    //Post Data
-    public void post(ApiPath webPath, String postData){
-        //TO-DO -- Implement this using a new class that implements AsyncTask'
-        Log.i("POST", postData);
-    }
-
 }

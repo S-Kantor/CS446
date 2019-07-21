@@ -31,12 +31,11 @@ public interface TechnoSyncService {
             @Part MultipartBody.Part file
     );
 
-    @POST("startRecording")
-    Call<RecordingList> startRecording(@Path(value = "room-id") String roomId);
+    @POST("{room-id}/start-recording")
+    Call<String> startRecording(@Path(value = "room-id") String roomId);
 
-    @POST("stopRecording")
-    Call<RecordingList> stopRecording(@Path(value = "room-id") String roomId);
-
+    @POST("{room-id}/stop-recording")
+    Call<String> stopRecording(@Path(value = "room-id") String roomId);
 
     @Streaming
     @GET("{room-id}/get-composition")

@@ -30,15 +30,15 @@ public class RecordingEngine extends Subscriber {
     String groupId = "";
 
     //Record changes to instrument pad
-    public void instrumentPadUpdate(Tile tile) {
+    public void instrumentPadUpdate(Tile tile, String datetime) {
         if (!recording) return;
-        RecordingEntry recordingEntry = new RecordingEntry(tile.getFileString(), false);
+        RecordingEntry recordingEntry = new RecordingEntry(tile.getFileString(), false, datetime);
         recordingList.newEntry(recordingEntry);
     }
 
 
     //Record changes playing beats
-    public void loopPadUpdate(StateArray stateArray) {
+    public void loopPadUpdate(StateArray stateArray, String datetime) {
         if (!recording) return;
 
         //Get hit tile value
@@ -54,18 +54,18 @@ public class RecordingEngine extends Subscriber {
         currentState.setStateArray(stateArray);
 
         //Record value
-        recordingList.newEntry(new RecordingEntry(fileString, true));
+        recordingList.newEntry(new RecordingEntry(fileString, true, datetime));
     }
 
     //Notify server that client is recording
-    private void startRecording() {
+    private void startRecording(String datetime) {
         recording = true;
-        recordingStartTime = new SimpleDateFormat("%D:%H:%M:%S.%f", Locale.CANADA).format(new Date());
+        recordingStartTime = datetime;
 
-        Call<RecordingList> call = webApi.getTechnoSyncService().startRecording(groupId);
-        call.enqueue(new Callback<RecordingList>() {
+        Call<String> call = webApi.getTechnoSyncService().startRecording(groupId);
+        call.enqueue(new Callback<String>() {
             @Override
-            public void onResponse(Call<RecordingList> call, Response<RecordingList> response) {
+            public void onResponse(Call<String> call, Response<String> response) {
                 if (response.isSuccessful()) {
                     Log.i("TechnoSynch", "Call succeeded");
                 } else {
@@ -74,22 +74,22 @@ public class RecordingEngine extends Subscriber {
             }
 
             @Override
-            public void onFailure(Call<RecordingList> call, Throwable t) {
+            public void onFailure(Call<String> call, Throwable t) {
                 Log.i("TechnoSynch", "Actual http call failed (no internet, wrong url, etc.");
             }
         });
     }
 
     //Send local recording to server
-    private void sendRecording() {
+    private void sendRecording(String datetime) {
         recording = false;
-        recordingEndTime = new SimpleDateFormat("%D:%H:%M:%S.%f", Locale.CANADA).format(new Date());
+        recordingEndTime = datetime;
 
         //Upload
-        Call<RecordingList> call = webApi.getTechnoSyncService().stopRecording(groupId);
-        call.enqueue(new Callback<RecordingList>() {
+        Call<String> call = webApi.getTechnoSyncService().stopRecording(groupId);
+        call.enqueue(new Callback<String>() {
             @Override
-            public void onResponse(Call<RecordingList> call, Response<RecordingList> response) {
+            public void onResponse(Call<String> call, Response<String> response) {
                 if (response.isSuccessful()) {
                     Log.i("TechnoSynch", "Call succeeded");
                 } else {
@@ -98,7 +98,7 @@ public class RecordingEngine extends Subscriber {
             }
 
             @Override
-            public void onFailure(Call<RecordingList> call, Throwable t) {
+            public void onFailure(Call<String> call, Throwable t) {
                 Log.i("TechnoSynch", "Actual http call failed (no internet, wrong url, etc.");
             }
         });
@@ -108,17 +108,17 @@ public class RecordingEngine extends Subscriber {
     public void notify(EventPackage eventPackage) {
         try {
             EventType eventType = eventPackage.getEventType();
-
+            String eventTime = new SimpleDateFormat("%D:%H:%m:%s:%S", Locale.CANADA).format(new Date());
 
             //Handle events with no data
             //Start recording
             if (eventType == EventType.RECORDING_START) {
-                startRecording();
+                startRecording(eventTime);
                 return;
             }
             //Stop Recording
             else if (eventType == EventType.RECORDING_END) {
-                sendRecording();
+                sendRecording(eventTime);
                 return;
             }
 
@@ -141,18 +141,18 @@ public class RecordingEngine extends Subscriber {
             //Update instrument playback
             else if (eventType == EventType.INSTRUMENTPAD_SOUND_HIT) {
                 Tile tile = (Tile) objectInputStream.readObject();
-                instrumentPadUpdate(tile);
+                instrumentPadUpdate(tile, eventTime);
 
             }
             //Update loop playback
             else if (eventType == EventType.LOOPPAD_STATE_UPDATE) {
                 StateArray stateArray = (StateArray) objectInputStream.readObject();
-                loopPadUpdate(stateArray);
+                loopPadUpdate(stateArray, eventTime);
             }
 
         } catch (Exception e) {
             //Error
-            // TODO needs logger.
+            Log.i("Event Error", "Error on notifying observers", e);
         }
     }
 
