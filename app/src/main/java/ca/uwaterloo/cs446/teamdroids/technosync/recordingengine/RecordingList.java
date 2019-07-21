@@ -6,16 +6,36 @@ import java.util.List;
 
 public class RecordingList implements Serializable {
     private List<RecordingEntry> recordingEntries;
+    private String startTime;
+    private String endTime;
 
-    //Insert new record
-    public void newEntry(RecordingEntry recordingEntry){
-        recordingEntries.add(recordingEntry);
-    }
-
-    public List<RecordingEntry> getRecordingEntries(){return recordingEntries;}
-
-    public RecordingList(){
+    RecordingList() {
         recordingEntries = new ArrayList<>();
     }
 
+    //Insert new record
+    void newEntry(RecordingEntry recordingEntry) {
+        recordingEntries.add(recordingEntry);
+    }
+
+    public List<RecordingEntry> getRecordingEntries() {
+        return recordingEntries;
+    }
+
+
+    public String getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(String endTime) {
+        this.endTime = endTime;
+    }
+
+    public String getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(String startTime) {
+        this.startTime = startTime;
+    }
 }

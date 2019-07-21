@@ -5,6 +5,7 @@ import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
@@ -35,7 +36,7 @@ public interface TechnoSyncService {
     Call<String> startRecording(@Path(value = "room-id") String roomId);
 
     @POST("{room-id}/stop-recording")
-    Call<String> stopRecording(@Path(value = "room-id") String roomId);
+    Call<String> stopRecording(@Path(value = "room-id") String roomId, @Body RecordingList body);
 
     @Streaming
     @GET("{room-id}/get-composition")

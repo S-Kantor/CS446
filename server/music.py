@@ -75,10 +75,10 @@ class FileOffsetRecording:
     composition: AudioSegment
 
     def __init__(self, start_time, end_time, timestamps):
-        self.start_time = datetime.datetime.strptime(start_time, "%H:%M:%S.%f")
-        self.end_time = datetime.datetime.strptime(end_time, "%H:%M:%S.%f")
+        self.start_time = start_time
+        self.end_time = end_time
 
-        self.timestamps =timestamps
+        self.timestamps = timestamps
 
     def gen_offsets(self):
         loopable_start_times = {}

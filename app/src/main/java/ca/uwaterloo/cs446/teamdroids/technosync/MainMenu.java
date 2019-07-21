@@ -103,7 +103,7 @@ public class MainMenu extends AppCompatActivity {
     public void redoServerCheck(View view) {
         Toast.makeText(view.getContext(), "checking server again",
                 Toast.LENGTH_LONG).show();
-        checkServerConnection();
+        recreate();
     }
 
     //Check if server is up

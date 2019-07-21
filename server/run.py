@@ -11,6 +11,11 @@ app = Flask(__name__)
 rooms: Dict[str, Room] = {}
 
 
+# Accepts datetime in milliseconds and converts to microseconds
+def parse_time(time_as_string):
+    return datetime.strptime(time_as_string + '000', "%j:%H:%M:%S:%f")
+
+
 @app.route("/")
 def hello():
     return "Hello World!"
@@ -54,16 +59,17 @@ def start_recording(room_id):
 # Informs the server that a user is finished recording and provides
 #   the FileOffsetRecordings as a json in the following format:
 # {
+#   'start_time': "%D:%H:%M:%S.%f" (f is milliseconds)
+#   'end_time': "%D:%H:%M:%S.%f"
 #   'events' : [
 #       {
 #           filename: string,   -- name of the audio file (uploaded and default)
-#           time: "%D:%H:%M:%S.%f" (f is milliseconds)
+#           time: "%D:%H:%M:%S.%f"
 #           loopable: bool
 #       },
 #       ...
 #   ]
 # }
-# The first event represents the recording start time, and the last event the end time
 # Returns whether the recording session is complete
 @app.route("/<string:room_id>/stop-recording", methods=['POST'])
 def stop_recording(room_id):
@@ -71,15 +77,14 @@ def stop_recording(room_id):
 
     json = request.get_json()
     app.logger.debug(json)
-    timestamps = [
-        BeatTimestamp(
-            bool(e['loopable']),
-            datetime.strptime(e['time'] + '000', "%-j:%-H:%-M:%-S:%f"),
-            e['filename']
-        ) for e in json['events']]
-    new_timing = FileOffsetRecording(timestamps[0], timestamps[-1], timestamps[1:-1])
+    timestamps = [BeatTimestamp(bool(e['loopable']), parse_time(e['dateTime']), e['fileName'])
+                  for e in json['recordingEntries']]
+    new_timing = FileOffsetRecording(
+        parse_time(json['startTime']),
+        parse_time(json['endTime']),
+        timestamps)
     complete = rooms[room_id].stop_recording(new_timing)
-    app.logger.debug('last user: %b', complete)
+    app.logger.debug('last user: %s', complete)
     return str(complete)
 
 

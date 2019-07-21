@@ -26,7 +26,6 @@ public class RecordingEngine extends Subscriber {
     RecordingList recordingList;
     WebApi webApi;
     boolean recording = false;
-    String recordingStartTime, recordingEndTime;
     String groupId = "";
 
     //Record changes to instrument pad
@@ -60,7 +59,7 @@ public class RecordingEngine extends Subscriber {
     //Notify server that client is recording
     private void startRecording(String datetime) {
         recording = true;
-        recordingStartTime = datetime;
+        recordingList.setStartTime(datetime);
 
         Call<String> call = webApi.getTechnoSyncService().startRecording(groupId);
         call.enqueue(new Callback<String>() {
@@ -83,10 +82,10 @@ public class RecordingEngine extends Subscriber {
     //Send local recording to server
     private void sendRecording(String datetime) {
         recording = false;
-        recordingEndTime = datetime;
+        recordingList.setEndTime(datetime);
 
         //Upload
-        Call<String> call = webApi.getTechnoSyncService().stopRecording(groupId);
+        Call<String> call = webApi.getTechnoSyncService().stopRecording(groupId, recordingList);
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
@@ -108,7 +107,7 @@ public class RecordingEngine extends Subscriber {
     public void notify(EventPackage eventPackage) {
         try {
             EventType eventType = eventPackage.getEventType();
-            String eventTime = new SimpleDateFormat("%D:%H:%m:%s:%S", Locale.CANADA).format(new Date());
+            String eventTime = new SimpleDateFormat("DDD:HH:mm:ss:SSS", Locale.CANADA).format(new Date());
 
             //Handle events with no data
             //Start recording
