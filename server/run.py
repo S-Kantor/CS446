@@ -48,24 +48,22 @@ def is_valid_room_id(room_id):
 @app.route("/<string:room_id>/start-recording", methods=['POST'])
 def start_recording(room_id):
     app.logger.debug('a user started recording: %s', room_id)
-    rooms[room_id].start_recording()
-    return 0
+    return str(rooms[room_id].start_recording())
 
 
 # Informs the server that a user is finished recording and provides
 #   the FileOffsetRecordings as a json in the following format:
 # {
-#   'start_time': "%D:%H:%M:%S.%f" (f is microseconds)
-#   'end_time': "%D:%H:%M:%S.%f"
 #   'events' : [
 #       {
 #           filename: string,   -- name of the audio file (uploaded and default)
-#           time: "%D:%H:%M:%S.%f"
+#           time: "%D:%H:%M:%S.%f" (f is milliseconds)
 #           loopable: bool
 #       },
 #       ...
 #   ]
 # }
+# The first event represents the recording start time, and the last event the end time
 # Returns whether the recording session is complete
 @app.route("/<string:room_id>/stop-recording", methods=['POST'])
 def stop_recording(room_id):
@@ -76,13 +74,10 @@ def stop_recording(room_id):
     timestamps = [
         BeatTimestamp(
             bool(e['loopable']),
-            datetime.strptime(e['time'], "%D:%H:%M:%S.%f"),
+            datetime.strptime(e['time'] + '000', "%-j:%-H:%-M:%-S:%f"),
             e['filename']
         ) for e in json['events']]
-    new_timing = FileOffsetRecording(
-        datetime.strptime(json['start_time'], "%D:%H:%M:%S.%f"),
-        datetime.strptime(json['end_time'], "%D:%H:%M:%S.%f"),
-        timestamps)
+    new_timing = FileOffsetRecording(timestamps[0], timestamps[-1], timestamps[1:-1])
     complete = rooms[room_id].stop_recording(new_timing)
     app.logger.debug('last user: %b', complete)
     return str(complete)
