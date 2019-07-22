@@ -71,7 +71,7 @@ public class ChangePresetView extends AppCompatActivity {
                 countOfPresets += 1;
             }
         }
-        File newPresetFile = new File(directory, "preset_" + String.valueOf(countOfPresets + 1) + ".txt");
+        File newPresetFile = new File(directory, "presetCustomPreset" + String.valueOf(countOfPresets + 1) + ".txt");
 
         FileOutputStream stream = null;
         try {

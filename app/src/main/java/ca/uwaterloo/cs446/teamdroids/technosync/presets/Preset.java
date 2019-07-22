@@ -37,6 +37,12 @@ public class Preset {
         Tile tile = new Tile();
         tile.setTileId(tileId);
 
+        //Strip any mp4 file extensions
+
+        if(fileName.contains(".mp4")){
+            fileName = fileName.substring(0, fileName.length() - 4);
+        }
+
         //Set Disabled
         if(fileName.contains("missing")){
             tile.setDisabled(true);

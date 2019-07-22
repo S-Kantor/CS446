@@ -15,7 +15,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:text="Choose your Preset!"
+        android:text="Create Preset!"
         android:textSize="24sp"
         app:layout_constraintBottom_toTopOf="@+id/listOfFileNames"
         app:layout_constraintEnd_toEndOf="parent"
