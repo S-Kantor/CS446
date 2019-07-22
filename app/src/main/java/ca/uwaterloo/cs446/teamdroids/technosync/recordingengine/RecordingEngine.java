@@ -1,5 +1,6 @@
 package ca.uwaterloo.cs446.teamdroids.technosync.recordingengine;
 
+import android.content.SharedPreferences;
 import android.util.Base64;
 import android.util.Log;
 
@@ -27,6 +28,7 @@ public class RecordingEngine extends Subscriber {
     WebApi webApi;
     boolean recording = false;
     String groupId = "";
+    SharedPreferences sharedPreferences;
 
     //Record changes to instrument pad
     public void instrumentPadUpdate(Tile tile, String datetime) {
@@ -103,6 +105,23 @@ public class RecordingEngine extends Subscriber {
         });
     }
 
+    private void saveRoomID() {
+        // Save the groupId to the list of groups that the user was a part of to persist
+        // Fetch the list of previously saved groupIds
+        SharedPreferences preferences = this.sharedPreferences;
+        String finishedSongList = preferences.getString("composedSongGroups", "");
+        if (finishedSongList.equals("")) {
+            finishedSongList = groupId;
+        } else {
+            finishedSongList = finishedSongList + "," + groupId;
+        }
+
+        // Save back the updated groupIds
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("composedSongGroups", finishedSongList);
+        editor.apply();
+    }
+
     //Receive event from event bus
     public void notify(EventPackage eventPackage) {
         try {
@@ -118,6 +137,7 @@ public class RecordingEngine extends Subscriber {
             //Stop Recording
             else if (eventType == EventType.RECORDING_END) {
                 sendRecording(eventTime);
+                saveRoomID();
                 return;
             }
 
@@ -162,11 +182,12 @@ public class RecordingEngine extends Subscriber {
 
 
     //Initialize
-    public RecordingEngine(WebApi webApi, String groupId) {
+    public RecordingEngine(WebApi webApi, String groupId, SharedPreferences sharedPreferences) {
         this.currentState = new CurrentState();
         this.recordingList = new RecordingList();
         this.webApi = webApi;
         this.groupId = groupId;
+        this.sharedPreferences = sharedPreferences;
     }
 
 

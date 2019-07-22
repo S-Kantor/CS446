@@ -461,7 +461,7 @@ public class CreationView extends AppCompatActivity {
 
         //Setup eventbus
         audioEngine = new AudioEngine();
-        recordingEngine = new RecordingEngine(webApi, groupId);
+        recordingEngine = new RecordingEngine(webApi, groupId, PreferenceManager.getDefaultSharedPreferences(this));
         instrumentPad = new InstrumentPad();
         loopPad = new LoopPad();
         eventBus = new EventBus();
