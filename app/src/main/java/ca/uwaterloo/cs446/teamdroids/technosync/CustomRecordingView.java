@@ -165,7 +165,9 @@ public class CustomRecordingView extends AppCompatActivity {
         ArrayList<String> listOfUserBeats = new ArrayList<>();
         File[] listOfFiles = getFilesDir().listFiles();
         for (File file : listOfFiles) {
-            listOfUserBeats.add(file.getAbsolutePath());
+            if (file.getName().endsWith(".mp4")) {
+                listOfUserBeats.add(file.getAbsolutePath());
+            }
         }
         myListAdapter.clear();
         myListAdapter.addAll(listOfUserBeats);
