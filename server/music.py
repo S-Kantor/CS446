@@ -115,7 +115,7 @@ class FileOffsetRecording:
                 sound = new_sounds[beat_offset.filename]
             else:
                 path = os.path.join(SOUND_DIR, beat_offset.filename)
-                sound = AudioSegment.from_file(path, format="mp3")
+                sound = AudioSegment.from_file(path + '.mp3', format="mp3")
 
             # if the sound is loopable create empty segment of correct length
             if beat_offset.loopable:

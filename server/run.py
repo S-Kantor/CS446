@@ -118,7 +118,7 @@ def is_recording_complete(room_id):
 def get_composition(room_id):
     app.logger.debug('getting composition for room %s', room_id)
     file = rooms[room_id].get_composition_as_mp3()
-    return send_file(file)
+    return send_file(file, mimetype="audio/mpeg")
 
 
 # --------------------------------------------------------
