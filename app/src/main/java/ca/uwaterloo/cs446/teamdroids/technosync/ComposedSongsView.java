@@ -69,13 +69,13 @@ public class ComposedSongsView extends AppCompatActivity {
         // Fetch the list of group IDs the user has been a part of
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         String finishedSongsString = preferences.getString("composedSongGroups", "");
-        String[] songs = {"room1", "room2", "room3", "room4"}; //finishedSongsString.split(",");
+        String[] songs = finishedSongsString.split(",");
         ArrayList<ComposedSongModel> songsList = new ArrayList<ComposedSongModel>();
 
         Map<String, String> fileDict = new HashMap<String, String>();
         File[] files = getFilesDir().listFiles();
         for (File file : files) {
-            if (file.getName().endsWith(".mp3") & file.getName().contains("/composed_song")) {
+            if (file.getName().endsWith(".mp3") & file.getName().contains("composed_song")) {
                 fileDict.put(getFileNameFromPath(file.getAbsolutePath()), file.getAbsolutePath());
             }
         }
@@ -133,7 +133,7 @@ public class ComposedSongsView extends AppCompatActivity {
                                 song.getGroupId()).execute();
 
                         song.setIsDownloaded(true);
-                        listAdapter.notifyDataSetChanged();
+                        recreate();
                     } else {
                         String message = "Song is being processed by the server. Please try later!";
                         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
@@ -306,7 +306,7 @@ public class ComposedSongsView extends AppCompatActivity {
             }
 
             TextView songNameTextView = convertView.findViewById(R.id.songName);
-            String text = "Song_" + position;
+            String text = "Song_" + song.getGroupId();
             songNameTextView.setText(text);
 
             Button downloadButton = convertView.findViewById(R.id.downloadSongButton);
